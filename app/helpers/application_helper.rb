@@ -15,7 +15,7 @@ module ApplicationHelper
 
   def markdown(text)
     renderer = HtmlWithPygments.new(hard_wrap: true, filter_html: false)
-    text = emojify(text)
+    #text = emojify(text)
     Redcarpet::Markdown.new(renderer, markdown_options.merge(footnotes: true)).render(text).html_safe
   end
 
