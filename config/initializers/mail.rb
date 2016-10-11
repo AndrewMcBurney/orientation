@@ -1,13 +1,23 @@
 if !Rails.env.test?
-  ActionMailer::Base.smtp_settings = {
-    :address        => 'smtp.sendgrid.net',
-    :port           => '587',
-    :authentication => :plain,
-    :user_name      => ENV.fetch('SENDGRID_USERNAME'),
-    :password       => ENV.fetch('SENDGRID_PASSWORD'),
-    :domain         => 'heroku.com',
-    :enable_starttls_auto => true
-  }
+  def sendgrid_configured?
+    ENV["SENDGRID_USERNAME"].present? &&
+      ENV["SENDGRID_PASSWORD"].present?
+  end
+
+  if sendgrid_configured?
+    ActionMailer::Base.smtp_settings = {
+      address:              'smtp.sendgrid.net',
+      port:                 '587',
+      authentication:       :plain,
+      user_name:            ENV.fetch('SENDGRID_USERNAME'),
+      password:             ENV.fetch('SENDGRID_PASSWORD'),
+      domain:               'heroku.com',
+      enable_starttls_auto: true
+    }
+    ActionMailer::Base.delivery_method = :smtp
+  else
+    Rails.logger.info { "Sendgrid environment variables not set. Transactional emails will not be sent."}
+  end
 
   def mandrill_configured?
     ENV["MANDRILL_USERNAME"].present? &&
