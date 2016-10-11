@@ -10,14 +10,13 @@ class ArticleMailer < ActionMailer::Base
   include ActionView::Helpers::UrlHelper
   include ApplicationHelper
 
-  default from: ENV['DEFAULT_FROM_EMAIL'] || 'ops@doximity.com'
-
+  default from: ENV['DEFAULT_FROM_EMAIL'] || 'notifications@orientation.io'
 
   def notify_author_of_staleness(articles)
     author = articles.last.author
     mandrill_mail template: 'stale-article-alert',
                   subject: 'Some of your Wiki articles might be stale',
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: { email: author.email, name: author.name },
                   vars: {
                     'CONTENT' => format_email_content(articles).html_safe
@@ -28,7 +27,7 @@ class ArticleMailer < ActionMailer::Base
     author = articles.last.author
     mandrill_mail template: 'rotten-article-alert',
                   subject: 'Some of your Wiki articles have been marked as rotten',
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: { email: author.email, name: author.name },
                   vars: {
                     'CONTENT' => format_email_content(articles).html_safe
@@ -51,7 +50,7 @@ class ArticleMailer < ActionMailer::Base
   def send_rotten_notification_for(article, contributors, reporter, description)
     mandrill_mail template: 'article-rotten-update',
                   subject: "#{reporter.name} marked #{article.title} as rotten",
-                  from_name: 'Dox Wiki',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: contributors,
                   vars: {
                     'ARTICLE_TITLE' => article.title,
@@ -65,7 +64,7 @@ class ArticleMailer < ActionMailer::Base
   def send_endorsement_notification_for(article, contributors, endorser)
     mandrill_mail template: 'article-endorsement-notification',
                   subject: "#{endorser.name} found #{article.title} useful!",
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: contributors,
                   vars: {
                     'ENDORSER_NAME' => endorser.name,
