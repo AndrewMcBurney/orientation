@@ -5,6 +5,8 @@ class Article < ApplicationRecord
   extend ActionView::Helpers::DateHelper
   extend FriendlyId
 
+  has_paper_trail
+
   pg_search_scope :search,
     against: {
       title: 'A',

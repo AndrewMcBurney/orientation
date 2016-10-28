@@ -240,6 +240,9 @@ GEM
     omniauth-oauth2 (1.4.0)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
+    paper_trail (5.2.2)
+      activerecord (>= 3.0, < 6.0)
+      request_store (~> 1.1)
     pg (0.18.4)
     pkg-config (1.1.7)
     posix-spawn (0.3.11)
@@ -405,6 +408,7 @@ DEPENDENCIES
   mandrill_mailer
   omniauth
   omniauth-google-oauth2
+  paper_trail
   pg
   pg_search!
   platform-api!
@@ -436,4 +440,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.2
+   1.13.6

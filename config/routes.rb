@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get :rotten
       get :archived
       get :popular
+      get :search
     end
     member do
       put :toggle_subscription
@@ -28,6 +29,7 @@ Rails.application.routes.draw do
       put :toggle_archived
       get :subscriptions
     end
+    resources :article_versions, as: 'versions', only: [:index, :show, :update]
   end
 
   resources :guides, only: [:show, :index]

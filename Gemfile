@@ -41,6 +41,7 @@ gem 'redis', '~> 3.0'
 # make Heroku API requests to upload the Let's Encrypt SSL certificates
 gem 'platform-api', github: 'jalada/platform-api', branch: 'master'
 gem 'letsencrypt-rails-heroku', group: 'production'
+gem 'paper_trail'
 
 group :development do
   gem 'better_errors'

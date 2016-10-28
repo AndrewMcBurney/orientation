@@ -14,9 +14,14 @@ class ArticlesController < ApplicationController
     :report_rot,
     :mark_fresh
   ]
+  before_action :set_paper_trail_whodunnit
   respond_to :html, :json
 
   def index
+    @articles = fetch_articles
+  end
+
+  def search
     @articles = fetch_articles
   end
 
