@@ -1,5 +1,6 @@
 class ArticleVersionsController < ApplicationController
   before_action :find_article_by_params, only: [:index, :show, :update]
+  before_action :set_paper_trail_whodunnit
 
   def index
     @versions = @article.versions.unscoped.order('created_at desc')
