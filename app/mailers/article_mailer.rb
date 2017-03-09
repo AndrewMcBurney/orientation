@@ -123,6 +123,7 @@ class ArticleMailer < ActionMailer::Base
 
   def formatted_changes(last_value, article_value)
     if last_value != article_value
+      require_dependency "#{File.join(Rails.root, "lib", "html_diff_tool")}"
       HTMLDiffTool.diff(last_value, article_value)
     else
       ''
