@@ -77,7 +77,7 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  # private
+  private
 
   # Orientation is meant to be used with mandril and this is a simple adapter to
   # ensure we keep the code above unchanged to avoid potential merge headaches
