@@ -6,6 +6,8 @@
 # This email can be tested using the `.test` method:
 #   ArticleMailer.test(:notify_author_of_staleness, email: <author.email>)
 #
+require_dependency 'html_diff_tool'
+
 class ArticleMailer < ActionMailer::Base
   include ActionView::Helpers::UrlHelper
   include ApplicationHelper
@@ -75,7 +77,7 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  private
+  # private
 
   # Orientation is meant to be used with mandril and this is a simple adapter to
   # ensure we keep the code above unchanged to avoid potential merge headaches
@@ -123,7 +125,6 @@ class ArticleMailer < ActionMailer::Base
 
   def formatted_changes(last_value, article_value)
     if last_value != article_value
-      require_dependency "#{File.join(Rails.root, "lib", "html_diff_tool")}"
       HTMLDiffTool.diff(last_value, article_value)
     else
       ''
