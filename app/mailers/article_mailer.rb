@@ -6,6 +6,8 @@
 # This email can be tested using the `.test` method:
 #   ArticleMailer.test(:notify_author_of_staleness, email: <author.email>)
 #
+require_dependency 'html_diff_tool'
+
 class ArticleMailer < ActionMailer::Base
   include ActionView::Helpers::UrlHelper
   include ApplicationHelper
