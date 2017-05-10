@@ -14,7 +14,6 @@ class ArticleMailer < ActionMailer::Base
 
   default from: ENV['DEFAULT_FROM_EMAIL'] || 'ops@doximity.com'
 
-
   def notify_author_of_staleness(articles)
     author = articles.last.author
     mandrill_mail template: 'stale-article-alert',
@@ -26,10 +25,10 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  def notify_author_of_rotten(articles)
+  def notify_author_of_outdated(articles)
     author = articles.last.author
-    mandrill_mail template: 'rotten-article-alert',
-                  subject: 'Some of your Wiki articles have been marked as rotten',
+    mandrill_mail template: 'outdated-article-alert',
+                  subject: 'Some of your Wiki articles have been marked as outdated',
                   from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: { email: author.email, name: author.name },
                   vars: {
@@ -40,7 +39,7 @@ class ArticleMailer < ActionMailer::Base
   def send_updates_for(article, user)
     mandrill_mail template: 'article-subscription-update',
                   subject: "#{article.title} was updated by #{article.editor}",
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: { email: user.email, name: user.name },
                   vars: {
                     'ARTICLE_TITLE' => article.title,
@@ -50,10 +49,10 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  def send_rotten_notification_for(article, contributors, reporter, description)
-    mandrill_mail template: 'article-rotten-update',
-                  subject: "#{reporter.name} marked #{article.title} as rotten",
-                  from_name: 'Dox Wiki',
+  def send_outdated_notification_for(article, contributors, reporter, description)
+    mandrill_mail template: 'article-outdated-update',
+                  subject: "#{reporter.name} marked #{article.title} as outdated",
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: contributors,
                   vars: {
                     'ARTICLE_TITLE' => article.title,

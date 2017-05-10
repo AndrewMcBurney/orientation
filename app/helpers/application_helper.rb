@@ -19,7 +19,12 @@ module ApplicationHelper
   #
   def time_element(time, css_class = 'js-time')
     time = time.in_time_zone
-    time_tag time, time.to_s(:long), title: time, class: css_class
+    time_tag time, ordinalized_date(time), title: time, class: css_class
+  end
+
+  # Convert a time into an ordinalized (June 3rd, 2016) date
+  def ordinalized_date(time)
+    time.to_date.to_s(:long_ordinal)
   end
 
   ##

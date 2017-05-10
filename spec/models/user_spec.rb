@@ -104,8 +104,8 @@ RSpec.describe User do
       expect { user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
     end
 
-    it 'refuses user is an rot reporter for any articles' do
-      create(:article, rot_reporter: user)
+    it 'refuses user is an outdatedness reporter for any articles' do
+      create(:article, outdatedness_reporter: user)
 
       expect { user.destroy }.to raise_error(ActiveRecord::DeleteRestrictionError)
     end
@@ -144,7 +144,7 @@ RSpec.describe User do
     let(:replacement) { create(:user) }
     let(:article) { create(:article, author: user) }
     let(:edit) { create(:article, editor: user) }
-    let(:rot_report) { create(:article, rot_reporter: user) }
+    let(:outdated_report) { create(:article, outdatedness_reporter: user) }
 
     it 'replaces with another user and destroys' do
       expect do
@@ -153,7 +153,7 @@ RSpec.describe User do
             expect(user.replace_and_destroy!(replacement)).to eq user
           end.to change { article.reload.author }.from(user).to(replacement)
         end.to change { edit.reload.editor }.from(user).to(replacement)
-      end.to change { rot_report.reload.rot_reporter }.from(user).to(replacement)
+      end.to change { outdated_report.reload.outdatedness_reporter }.from(user).to(replacement)
     end
   end
 end

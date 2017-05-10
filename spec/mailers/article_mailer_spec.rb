@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.xdescribe ArticleMailer do
   let(:user) { create(:user, email: 'aimee@hanso.dk') }
+#NOTE: RSpec.describe ArticleMailer do
+  #NOTE: let(:user) { create(:user, email: 'aimee@orientation.io') }
 
   context ".notify_author_of_staleness" do
     let(:articles) do
@@ -39,6 +41,12 @@ RSpec.xdescribe ArticleMailer do
     it { articles.each { |article| is_expected.to include_merge_var_content(article.slug) } }
     it { is_expected.to include_merge_var_content(articles.second.slug) }
     it { is_expected.to be_from(email: 'ops@doximity.com') }
+    #NOTE:it { is_expected.to have_subject('Some of your Orientation articles might be stale') }
+    # If the slug for all articles are in the email, it's a safe bet the full URLs are as well.
+  #NOTE it { articles.each { |article| is_expected.to include_merge_var_content(article.slug) } }
+  #NOTE it { is_expected.to include_merge_var_content(articles.second.slug) }
+  #NOTE it { is_expected.to include_merge_var_content(articles.third.slug) }
+  #NOTE it { is_expected.to be_from(email: 'notifications@orientation.io') }
   end
 
   context ".send_updates_for(article, user, editor)" do
@@ -93,9 +101,10 @@ RSpec.xdescribe ArticleMailer do
           %q{<ins class="diffins">Tim's </ins>title})
       end
     end
+    #NOTE: it { is_expected.to be_from(email: 'notifications@orientation.io') }
   end
 
-  context ".send_rotten_notification_for(article, contributors)" do
+  context ".send_outdated_notification_for(article, contributors)" do
     let(:article) { create(:article) }
     let(:contributors) do
       [article.author, article.editor].compact.map do |user|
@@ -104,7 +113,7 @@ RSpec.xdescribe ArticleMailer do
     end
     let(:reporter) { create(:user) }
 
-    let(:mailer) { described_class.send_rotten_notification_for(article, contributors, reporter) }
+    let(:mailer) { described_class.send_outdated_notification_for(article, contributors, reporter) }
 
     subject { mailer }
 
@@ -112,6 +121,9 @@ RSpec.xdescribe ArticleMailer do
     it { is_expected.to use_template('article-rotten-update') }
     it { is_expected.to have_subject("#{reporter.name} marked #{article.title} as rotten") }
     it { is_expected.to be_from(email: 'ops@doximity.com') }
+    #NOTE:it { is_expected.to use_template('article-outdated-update') }
+    #NOTE:it { is_expected.to have_subject("#{reporter.name} marked #{article.title} as outdated") }
+    #NOTE:it { is_expected.to be_from(email: 'notifications@orientation.io') }
   end
 
   context ".send_endorsement_notification_for(article, author, endorser)" do
@@ -128,6 +140,7 @@ RSpec.xdescribe ArticleMailer do
     it { is_expected.to use_template('article-endorsement-notification') }
     it { is_expected.to have_subject("#{endorser.name} found #{article.title} useful!") }
     it { is_expected.to be_from(email: 'ops@doximity.com') }
+    #NOTE: it { is_expected.to be_from(email: 'notifications@orientation.io') }
   end
 
 end

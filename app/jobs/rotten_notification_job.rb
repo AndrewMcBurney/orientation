@@ -1,4 +1,4 @@
-class RottenNotificationJob < ActiveJob::Base
+class OutdatedNotificationJob < ActiveJob::Base
   queue_as :default
 
   def perform(article_ids)
@@ -7,6 +7,6 @@ class RottenNotificationJob < ActiveJob::Base
       article.update_column(:last_notified_author_at, Date.today)
     end
 
-    ArticleMailer.notify_author_of_rotten(articles).deliver
+    ArticleMailer.notify_author_of_outdated(articles).deliver
   end
 end
