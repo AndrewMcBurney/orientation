@@ -14,6 +14,7 @@ class ArticleMailer < ActionMailer::Base
 
   default from: ENV['DEFAULT_FROM_EMAIL'] || 'ops@doximity.com'
 
+  #NOTE:default from: ENV['DEFAULT_FROM_EMAIL'] || 'notifications@orientation.io'
 
   def notify_author_of_staleness(articles)
     author = articles.last.author
@@ -31,6 +32,8 @@ class ArticleMailer < ActionMailer::Base
     mandrill_mail template: 'rotten-article-alert',
                   subject: 'Some of your Wiki articles have been marked as rotten',
                   from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
+                  #NOTE:subject: 'Some of your Orientation articles might be stale',
+                  #NOTE:from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: { email: author.email, name: author.name },
                   vars: {
                     'CONTENT' => format_email_content(articles).html_safe
@@ -50,10 +53,14 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  def send_rotten_notification_for(article, contributors, reporter, description)
-    mandrill_mail template: 'article-rotten-update',
-                  subject: "#{reporter.name} marked #{article.title} as rotten",
-                  from_name: 'Dox Wiki',
+  #def send_rotten_notification_for(article, contributors, reporter, description)
+  #  mandrill_mail template: 'article-rotten-update',
+  #                subject: "#{reporter.name} marked #{article.title} as rotten",
+  #                from_name: 'Dox Wiki',
+  def send_outdated_notification_for(article, contributors, reporter)
+    mandrill_mail template: 'article-outdated-update',
+                  subject: "#{reporter.name} marked #{article.title} as outdated",
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: contributors,
                   vars: {
                     'ARTICLE_TITLE' => article.title,
@@ -69,6 +76,8 @@ class ArticleMailer < ActionMailer::Base
                   subject: "#{endorser.name} found #{article.title} useful!",
                   from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: contributors,
+                  #NOTE: from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
+                  #NOTE: to: format_contributors(contributors),
                   vars: {
                     'ENDORSER_NAME' => endorser.name,
                     'ENDORSER_URL' => author_url(endorser),
@@ -99,6 +108,13 @@ class ArticleMailer < ActionMailer::Base
       'No changes to title or content.'
     end
   end
+
+  #NOTE:
+  #def format_contributors(contributors)
+  #  contributors.map do |contributor|
+  #    { name: contributor.name, email: contributor.email }
+  #  end
+  #end
 
   def format_email_content(articles)
     articles.map do |article|

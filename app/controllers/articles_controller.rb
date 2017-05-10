@@ -17,18 +17,20 @@ class ArticlesController < ApplicationController
     :toggle_archived,
     :toggle_subscription,
     :toggle_endorsement,
-    :report_rot,
+    :report_outdated,
     :mark_fresh
   ]
   respond_to :html, :json
 
   def index
     @articles = fetch_articles
+
+    render :index, layout: false if request.xhr?
   end
 
   def show
     respond_with_article_or_redirect_or_new
-    @article.count_visit if @article.present?
+    record_article_metrics
   end
 
   def new
@@ -51,31 +53,31 @@ class ArticlesController < ApplicationController
   end
 
   def fresh
-    @articles = fetch_articles(Article.current.fresh)
+    @articles = fetch_articles(:fresh)
     @page_title = "Fresh Articles"
     render :index
   end
 
   def stale
-    @articles = fetch_articles(Article.current.stale)
+    @articles = fetch_articles(:stale)
     @page_title = "Stale Articles"
     render :index
   end
 
-  def rotten
-    @articles = fetch_articles(Article.current.rotten)
-    @page_title = "Rotten Articles"
+  def outdated
+    @articles = fetch_articles(:outdated)
+    @page_title = "Outdated Articles"
     render :index
   end
 
   def archived
-    @articles = fetch_articles(Article.archived)
+    @articles = fetch_articles(:archived)
     @page_title = "Archived Articles"
     render :index
   end
 
   def popular
-    @articles = fetch_articles(Article.current.popular)
+    @articles = fetch_articles(:popular)
     @page_title = "Popular Articles"
     render :index
   end
@@ -93,9 +95,9 @@ class ArticlesController < ApplicationController
     end
   end
 
-  def report_rot
-    @article.rot!(current_user.id)
-    flash[:notice] = "Successfully reported this article as rotten."
+  def report_outdated
+    @article.outdated!(current_user.id)
+    flash[:notice] = "Successfully reported this article as outdated."
     respond_with_article_or_redirect
   end
 
@@ -176,9 +178,12 @@ class ArticlesController < ApplicationController
   end
 
   def fetch_articles(scope = nil)
-    scope ||= Article.current
-    query = Article.includes(:tags).text_search(params[:search], scope)
-    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
+    #NOTE:scope ||= Article.current
+    #NOTE:query = Article.includes(:tags).text_search(params[:search], scope)
+    #NOTE:ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
+    scope ||= Article.includes(:tags).public_send(scope || :current)
+    results = Article.text_search(params[:search], scope)
+    ArticleDecorator.decorate_collection(results)
   end
 
   def find_article_by_params
@@ -208,6 +213,13 @@ class ArticlesController < ApplicationController
       return redirect_to @article, status: :moved_permanently
     else
       return respond_with @article
+    end
+  end
+
+  def record_article_metrics
+    if @article.present?
+      @article.count_visit
+      @article.view(user: current_user)
     end
   end
 end

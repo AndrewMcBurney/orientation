@@ -5,8 +5,10 @@ class User < ApplicationRecord
   has_many :subscribed_articles, through: :subscriptions, source: :article
   has_many :endorsements, class_name: "ArticleEndorsement", dependent: :destroy
   has_many :endorsed_articles, through: :endorsements, source: :article
-  has_many :edits, class_name: "Article", foreign_key: "editor_id", dependent: :restrict_with_exception
-  has_many :rot_reports, class_name: "Article", foreign_key: "rot_reporter_id", dependent: :restrict_with_exception
+  #has_many :edits, class_name: "Article", foreign_key: "editor_id", dependent: :restrict_with_exception
+  #has_many :rot_reports, class_name: "Article", foreign_key: "rot_reporter_id", dependent: :restrict_with_exception
+  has_many :edits, class_name: "Article", foreign_key: "editor_id"
+  has_many :views, class_name: "Article::View"
 
   store_accessor :preferences,
     :private_email

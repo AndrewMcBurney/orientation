@@ -1,4 +1,7 @@
 if Rails.configuration.orientation["exception_reporter"] == "bugsnag"
+  #NOTE: other didn't require this gem
+  require "bugsnag"
+
   Bugsnag.configure do |config|
     # the API key is set with the BUGSNAG_API_KEY environment variable but you
     # can also hardcode it here with the following configuration variable:

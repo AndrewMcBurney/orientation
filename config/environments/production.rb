@@ -66,6 +66,10 @@ Rails.application.configure do
   config.action_mailer.default_url_options =
   { host: ENV.fetch("ORIENTATION_DOMAIN") }
 
+  #NOTE: config.mandrill_mailer.default_url_options =
+    #NOTE: config.action_mailer.default_url_options =
+      #NOTE: { host: ENV.fetch("ORIENTATION_DOMAIN") }
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
@@ -88,4 +92,8 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Using the letsencrypt-rails-heroku gem to automatically renew Let's Encrypt
+  # SSL certificate.
+  config.middleware.use Letsencrypt::Middleware
 end
