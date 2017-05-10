@@ -148,18 +148,14 @@ class Article < ApplicationRecord
     touch(:updated_at)
   end
 
-  def rot!(user_id, description)
-    update(rotted_at: Time.current, rot_reporter_id: user_id)
-    SendArticleRottenJob.perform_later(id, user_id, description)
-  end
-
   def never_notified_author?
     self.last_notified_author_at.nil?
   end
 
-  def outdated!(user_id)
+  # might need description here
+  def outdated!(user_id, description = '')
     update(outdated_at: Time.current, outdatedness_reporter_id: user_id)
-    SendArticleOutdatedJob.perform_later(id, user_id)
+    SendArticleOutdatedJob.perform_later(id, user_id, description)
   end
 
   def recently_notified_author?

@@ -8,10 +8,8 @@ RSpec.describe SendArticleOutdatedJob do
     contributors  = article.contributors
     mailer        = double("ArticleMailer", deliver: true)
 
-    #expect(ArticleMailer).to receive(:send_rotten_notification_for)
-    #  .with(article, contributors, reporter, description).and_return(mailer)
     expect(ArticleMailer).to receive(:send_outdated_notification_for)
-      .with(article, contributors, reporter).and_return(mailer)
+      .with(article, contributors, reporter, description).and_return(mailer)
 
     described_class.perform_now(article.id, reporter.id, description)
   end
