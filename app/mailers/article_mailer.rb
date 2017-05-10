@@ -14,8 +14,6 @@ class ArticleMailer < ActionMailer::Base
 
   default from: ENV['DEFAULT_FROM_EMAIL'] || 'ops@doximity.com'
 
-  #NOTE:default from: ENV['DEFAULT_FROM_EMAIL'] || 'notifications@orientation.io'
-
   def notify_author_of_staleness(articles)
     author = articles.last.author
     mandrill_mail template: 'stale-article-alert',
@@ -27,13 +25,11 @@ class ArticleMailer < ActionMailer::Base
                   }
   end
 
-  def notify_author_of_rotten(articles)
+  def notify_author_of_outdated(articles)
     author = articles.last.author
-    mandrill_mail template: 'rotten-article-alert',
-                  subject: 'Some of your Wiki articles have been marked as rotten',
+    mandrill_mail template: 'outdated-article-alert',
+                  subject: 'Some of your Wiki articles have been marked as outdated',
                   from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
-                  #NOTE:subject: 'Some of your Orientation articles might be stale',
-                  #NOTE:from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
                   to: { email: author.email, name: author.name },
                   vars: {
                     'CONTENT' => format_email_content(articles).html_safe
@@ -76,8 +72,6 @@ class ArticleMailer < ActionMailer::Base
                   subject: "#{endorser.name} found #{article.title} useful!",
                   from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: contributors,
-                  #NOTE: from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
-                  #NOTE: to: format_contributors(contributors),
                   vars: {
                     'ENDORSER_NAME' => endorser.name,
                     'ENDORSER_URL' => author_url(endorser),
@@ -108,13 +102,6 @@ class ArticleMailer < ActionMailer::Base
       'No changes to title or content.'
     end
   end
-
-  #NOTE:
-  #def format_contributors(contributors)
-  #  contributors.map do |contributor|
-  #    { name: contributor.name, email: contributor.email }
-  #  end
-  #end
 
   def format_email_content(articles)
     articles.map do |article|

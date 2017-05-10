@@ -1,6 +1,5 @@
 module OpenSearch
   class DescriptionsController < ApplicationController
-    #NOTE:respond_to :osd_xml
     layout false
 
     respond_to :osd_xml

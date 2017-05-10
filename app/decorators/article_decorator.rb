@@ -49,15 +49,6 @@ class ArticleDecorator < ApplicationDecorator
     content_tag(:span, "outdated", class: "state outdated") if object.outdated?
   end
 
-  # =============================
-  #NOTE: kept both up to TODO
-
-  def rot_reporter
-    if object.rot_reporter
-      link_to AuthorDecorator.new(object.rot_reporter), author_url(object.rot_reporter)
-    end
-  end
-
   def outdatedness_reporter(viewing_user = nil)
     if object.outdatedness_reporter
       if viewing_user == object.outdatedness_reporter
@@ -67,9 +58,6 @@ class ArticleDecorator < ApplicationDecorator
       end
     end
   end
-
-  #TODO
-  # =============================
 
   def outdated_at
     object.outdated_at.to_date.to_s(:long_ordinal)

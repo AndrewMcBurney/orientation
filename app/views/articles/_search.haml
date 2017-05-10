@@ -16,29 +16,18 @@
   .split-cell.mls.prs
     = render partial: 'articles/filter_link', locals: { name: 'fresh', definition: Article::FRESHNESS }
     = render partial: 'articles/filter_link', locals: { name: 'stale', definition: Article::STALENESS }
-    = render partial: 'articles/filter_link', locals: { name: 'rotten', definition: Article::ROTTENNESS }
+    = render partial: 'articles/filter_link', locals: { name: 'outdated', definition: Article::OUTDATEDNESS }
 
   .split-cell.pls.bdrl
     = render partial: 'articles/filter_link', locals: { name: 'popular', definition: Article::POPULARITY }
     = render partial: 'articles/filter_link', locals: { name: 'archived', definition: Article::ARCHIVAL }
-    -#NOTE: .split-cell.mls.prs
-    -#  = render partial: 'articles/filter_link', locals: { name: 'fresh', definition: Article::FRESHNESS }
-    -#  = render partial: 'articles/filter_link', locals: { name: 'stale', definition: Article::STALENESS }
-    -#  = render partial: 'articles/filter_link', locals: { name: 'outdated', definition: Article::OUTDATEDNESS }
 
-%ul.list.list--xs.js-search-results{ class: ( 'hide-results dn' if hideResults) }
+%ul.list.list--xs.js-search-results{ class: ( 'hide-results dn' if hide_results) }
   - if @articles && !@articles.empty?
     = render partial: 'articles/article', collection: @articles, locals: { highlight_search_keywords: search_body? }
   - else
     %li No results.
 
-- if alternateContent
+- if alternative_content
   .js-search-alternate
     = yield
-  -#NOTE:
-  -#%ul.list.list--xs.js-search-results{ class: ( 'hide-results dn' if hide_results) }
-  -#  = render @articles
-
-  -# if alternative_content
-  -#  .js-search-alternate
-  -#    = yield

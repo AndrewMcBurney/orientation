@@ -345,8 +345,7 @@ RSpec.describe Article do
     let(:reporter) { create(:user) }
     let(:description) { "outdated" }
 
-    subject(:rot!) { article.rot!(reporter.id, description) }
-    #NOTE: subject(:outdated!) { article.outdated!(reporter.id) }
+    subject(:outdated!) { article.outdated!(reporter.id) }
 
     context 'with a fresh article' do
       let(:article) { create(:article, :fresh) }

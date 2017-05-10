@@ -31,12 +31,12 @@ RSpec.describe "Viewing an article" do
       let(:article) { create(:article, :outdated) }
 
       it "displays an outdated banner" do
-        expect(page).to have_content("marked this article as outdated")
+        expect(page).to have_content("article was reported as outdated")
       end
     end
 
     context "with a heading" do
-      let(:article) { create(:article, content: "## Heading") } 
+      let(:article) { create(:article, content: "## Heading") }
 
       it "displays a table of contents" do
         expect(page).to have_content("Table of Contents")

@@ -5,9 +5,8 @@ class User < ApplicationRecord
   has_many :subscribed_articles, through: :subscriptions, source: :article
   has_many :endorsements, class_name: "ArticleEndorsement", dependent: :destroy
   has_many :endorsed_articles, through: :endorsements, source: :article
-  #has_many :edits, class_name: "Article", foreign_key: "editor_id", dependent: :restrict_with_exception
-  #has_many :rot_reports, class_name: "Article", foreign_key: "rot_reporter_id", dependent: :restrict_with_exception
-  has_many :edits, class_name: "Article", foreign_key: "editor_id"
+  has_many :edits, class_name: "Article", foreign_key: "editor_id", dependent: :restrict_with_exception
+  has_many :outdated_reports, class_name: "Article", foreign_key: "outdatedness_reporter_id", dependent: :restrict_with_exception
   has_many :views, class_name: "Article::View"
 
   store_accessor :preferences,
@@ -71,12 +70,12 @@ class User < ApplicationRecord
     StalenessNotificationJob.perform_later(article_ids) unless article_ids.empty?
   end
 
-  def notify_about_rotten_articles
+  def notify_about_outdated_articles
     return false unless self.active? # we don't want to send mailers to inactive authors
 
-    articles = self.articles.rotten
+    articles = self.articles.outdated
     article_ids = articles.map(&:id)
-    RottenNotificationJob.perform_later(article_ids) unless article_ids.empty?
+    OutdatedNotificationJob.perform_later(article_ids) unless article_ids.empty?
   end
 
   def subscribed_to?(article)
@@ -124,8 +123,8 @@ class User < ApplicationRecord
     edits.each { |edit| edit.update! editor: replacement }
     edits.reload
 
-    rot_reports.each { |rot_report| rot_report.update! rot_reporter: replacement }
-    rot_reports.reload
+    outdated_reports.each { |outdated_report| outdated_report.update! outdatedness_reporter: replacement }
+    outdated_reports.reload
 
     self
   end

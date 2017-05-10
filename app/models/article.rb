@@ -18,8 +18,6 @@ class Article < ApplicationRecord
     slugs.where(slug: friendly_id).exists?
   end
 
-  # =================
-  #NOTE: kept this
   FRESHNESS_LIMIT = 7.days
   STALENESS_LIMIT = 6.months
 
@@ -30,10 +28,6 @@ class Article < ApplicationRecord
   OUTDATEDNESS = "Deemed in need of an update."
   POPULARITY = "Endorsed, subscribed, & visited."
   ARCHIVAL = "Outdated & ignored in searches."
-
-  #friendly_id :title
-  # NOTE: up to this
-  # =================
 
   pg_search_scope :search,
     against: {
