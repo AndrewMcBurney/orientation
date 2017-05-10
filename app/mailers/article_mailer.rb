@@ -39,7 +39,7 @@ class ArticleMailer < ActionMailer::Base
   def send_updates_for(article, user)
     mandrill_mail template: 'article-subscription-update',
                   subject: "#{article.title} was updated by #{article.editor}",
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: { email: user.email, name: user.name },
                   vars: {
                     'ARTICLE_TITLE' => article.title,
@@ -52,7 +52,7 @@ class ArticleMailer < ActionMailer::Base
   def send_outdated_notification_for(article, contributors, reporter, description)
     mandrill_mail template: 'article-outdated-update',
                   subject: "#{reporter.name} marked #{article.title} as outdated",
-                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Orientation',
+                  from_name: ENV['DEFAULT_FROM_NAME'] || 'Dox Wiki',
                   to: contributors,
                   vars: {
                     'ARTICLE_TITLE' => article.title,

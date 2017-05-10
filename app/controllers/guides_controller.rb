@@ -9,10 +9,6 @@ class GuidesController < ApplicationController
   end
 
   private
-  #NOTE
-  #def find_article_by_params
-  #  @article ||= (Article.guide.find_by_slug(params[:id]) or Article.guide.find(params[:id]))
-  #end
 
   def guides
     Article.guide.current.alphabetical
