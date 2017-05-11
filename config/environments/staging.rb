@@ -65,10 +65,6 @@ Rails.application.configure do
   # config.mandrill_mailer.default_url_options =
   config.action_mailer.default_url_options = { host: 'orientation-staging.herokuapp.com' }
 
-  #NOTE: config.mandrill_mailer.default_url_options =
-    #NOTE: config.action_mailer.default_url_options =
-      #NOTE: { host: 'orientation-staging.herokuapp.com' }
-
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).
   config.i18n.fallbacks = true
