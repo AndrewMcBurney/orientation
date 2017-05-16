@@ -2,8 +2,8 @@ Rails.application.routes.draw do
 
   get 'auth/:provider/callback', to: 'sessions#create', as: :oauth_callback
   get 'auth/failure', to: redirect('/')
-  get 'login', to: 'sessions#new', as: :login
-  get 'logout', to: 'sessions#destroy', as: :logout
+  get :sign_in, to: "sessions#new", as: :sign_in
+  get :sign_out, to: "sessions#destroy", as: :sign_out
 
   mount Attachinary::Engine => "/attachinary"
 
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     collection do
       get :fresh
       get :stale
-      get :rotten
+      get :outdated
       get :archived
       get :popular
       get :search
@@ -28,14 +28,14 @@ Rails.application.routes.draw do
     member do
       put :toggle_subscription
       put :toggle_endorsement
-      put :report_rot
+      put :report_outdated
       put :mark_fresh
       put :toggle_archived
       get :subscriptions
     end
   end
 
-  resources :guides, only: [:show, :index]
+  resources :guides, only: [:index]
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
 

@@ -22,10 +22,10 @@ RSpec.describe 'deleting an author' do
     end
   end
 
-  context 'author with articles, edits and rot reports' do
+  context 'author with articles, edits and outdatedness reports' do
     let(:article) { create(:article, author: author) }
     let(:edit) { create(:article, editor: author) }
-    let(:rot_report) { create(:article, rot_reporter: author) }
+    let(:outdated_report) { create(:article, outdatedness_reporter: author) }
 
     it "re-assigns articles to a new user" do
       with_modified_env(ADMINISTRATORS: "42,#{logged_in_user.id},10101") do
@@ -51,7 +51,7 @@ RSpec.describe 'deleting an author' do
       end
     end
 
-    it "re-assigns rot reports to a new user" do
+    it "re-assigns report_outdated reports to a new user" do
       with_modified_env(ADMINISTRATORS: "42,#{logged_in_user.id},10101") do
         visit author_path(author.id)
 
@@ -59,7 +59,7 @@ RSpec.describe 'deleting an author' do
           select logged_in_user.name, from: 'replacement_author_id', wait: 3
           click_link_or_button 'Delete Author'
           expect(current_path).to eq(authors_path)
-        end.to change { rot_report.reload.rot_reporter }.from(author).to(logged_in_user)
+        end.to change { outdated_report.reload.outdatedness_reporter }.from(author).to(logged_in_user)
       end
     end
   end

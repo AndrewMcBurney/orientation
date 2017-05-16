@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
+
   before_action :authenticate_user!
   before_action :warn_about_email_whitelist
 
@@ -19,7 +20,7 @@ class ApplicationController < ActionController::Base
       # In the development environment, your current_user will be the
       # first User in the database or a dummy one created below.
       if Rails.env.development? || Rails.env.test?
-        user = User.first_or_create(email: "alvar@hanso.dk", name: "Alvar Hanso")
+        user = User.first_or_create!(name: "Orientation", email: "about@orientation.io")
         session[:user_id] = user.id
       else
         user = User.find(session[:user_id]) if session[:user_id].present?
@@ -41,7 +42,7 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     return true if current_user
     session["return_to"] ||= request.url
-    redirect_to login_path unless redirect_loop?
+    redirect_to sign_in_path unless redirect_loop?
   end
   helper_method :authenticate_user!
 
@@ -50,7 +51,7 @@ class ApplicationController < ActionController::Base
   end
 
   def login_redirect?
-    request.path == login_path
+    request.path == sign_in_path
   end
 
   def oauth_callback?

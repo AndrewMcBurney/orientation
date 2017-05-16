@@ -2,8 +2,8 @@
 
 - if @article.archived?
   %p.bulletin.bulletin--warning This article has been archived. Please don't trust the information displayed here.
-- if @article.rotten?
-  %p.bulletin.bulletin--warning This article was reported as rotten by #{@article.rot_reporter} on #{@article.rotted_at}. The information is partially or completely out-of-date.
+- if @article.outdated?
+  %p.bulletin.bulletin--warning This article was reported as outdated by #{@article.outdatedness_reporter} on #{@article.outdated_at}. The information is partially or completely out-of-date.
 - if @article.stale?
   %p.bulletin.bulletin--notice.tct This article has gone stale. It hasn't been updated in a while so the information may be slightly out-of-date.
 
@@ -66,7 +66,7 @@
           = link_to 'Fresh', mark_fresh_article_url( @article ), method: :put,
             class: "btn switch-btn switch-btn--success #{ 'is-active' if @article.fresh? }"
           = link_to 'Request Update', new_article_update_request_url( @article ),
-            class: "btn switch-btn switch-btn--error #{ 'is-active' if @article.rotten? }"
+            class: "btn switch-btn switch-btn--error #{ 'is-active' if @article.outdated? }"
 
         - toc = table_of_contents( @article.content || '' )
         - unless toc.empty?

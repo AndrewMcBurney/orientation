@@ -2,11 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.4
--- Dumped by pg_dump version 9.5.4
+-- Dumped from database version 9.6.2
+-- Dumped by pg_dump version 9.6.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -218,8 +219,8 @@ ALTER SEQUENCE articles_tags_id_seq OWNED BY articles_tags.id;
 
 CREATE TABLE attachinary_files (
     id integer NOT NULL,
-    attachinariable_type character varying,
     attachinariable_id integer,
+    attachinariable_type character varying,
     scope character varying,
     public_id character varying,
     version character varying,
@@ -473,84 +474,84 @@ ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: article_endorsements id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY article_endorsements ALTER COLUMN id SET DEFAULT nextval('article_endorsements_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: article_subscriptions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY article_subscriptions ALTER COLUMN id SET DEFAULT nextval('article_subscriptions_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: articles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY articles ALTER COLUMN id SET DEFAULT nextval('articles_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: articles_tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY articles_tags ALTER COLUMN id SET DEFAULT nextval('articles_tags_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: attachinary_files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY attachinary_files ALTER COLUMN id SET DEFAULT nextval('attachinary_files_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: delayed_jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: friendly_id_slugs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY friendly_id_slugs ALTER COLUMN id SET DEFAULT nextval('friendly_id_slugs_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: update_requests id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY update_requests ALTER COLUMN id SET DEFAULT nextval('update_requests_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -558,7 +559,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: article_endorsements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: article_endorsements article_endorsements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY article_endorsements
@@ -566,7 +567,7 @@ ALTER TABLE ONLY article_endorsements
 
 
 --
--- Name: article_subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: article_subscriptions article_subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY article_subscriptions
@@ -574,7 +575,7 @@ ALTER TABLE ONLY article_subscriptions
 
 
 --
--- Name: articles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: articles articles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY articles
@@ -582,7 +583,7 @@ ALTER TABLE ONLY articles
 
 
 --
--- Name: articles_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: articles_tags articles_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY articles_tags
@@ -590,7 +591,7 @@ ALTER TABLE ONLY articles_tags
 
 
 --
--- Name: attachinary_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: attachinary_files attachinary_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY attachinary_files
@@ -598,7 +599,7 @@ ALTER TABLE ONLY attachinary_files
 
 
 --
--- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: delayed_jobs delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY delayed_jobs
@@ -606,7 +607,7 @@ ALTER TABLE ONLY delayed_jobs
 
 
 --
--- Name: friendly_id_slugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: friendly_id_slugs friendly_id_slugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY friendly_id_slugs
@@ -614,7 +615,7 @@ ALTER TABLE ONLY friendly_id_slugs
 
 
 --
--- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY tags
@@ -622,7 +623,7 @@ ALTER TABLE ONLY tags
 
 
 --
--- Name: update_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: update_requests update_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY update_requests
@@ -630,7 +631,7 @@ ALTER TABLE ONLY update_requests
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
@@ -638,7 +639,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: versions versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY versions
@@ -756,6 +757,6 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 SET search_path TO "$user", public;
 
-INSERT INTO schema_migrations (version) VALUES ('20121012052227'), ('20121012053216'), ('20121024172653'), ('20121101215757'), ('20121101230245'), ('20121107203955'), ('20121107205723'), ('20121228090236'), ('20130218024132'), ('20130224191645'), ('20130302074219'), ('20130519172832'), ('20131002145513'), ('20131003155044'), ('20140215004410'), ('20140216160144'), ('20140217025247'), ('20140522210252'), ('20140602153320'), ('20140606204236'), ('20140923231243'), ('20141111222212'), ('20150117041549'), ('20150129150300'), ('20150328040718'), ('20150328040918'), ('20150328074815'), ('20150416104151'), ('20150829203748'), ('20150901204841'), ('20150921154734'), ('20150922194413'), ('20150922233803'), ('20160220002317'), ('20160220002318'), ('20160222234001'), ('20160710170239'), ('20161028171951'), ('20161108170423');
+INSERT INTO schema_migrations (version) VALUES ('20121012052227'), ('20121012053216'), ('20121024172653'), ('20121101215757'), ('20121101230245'), ('20121107203955'), ('20121107205723'), ('20121228090236'), ('20130218024132'), ('20130224191645'), ('20130302074219'), ('20130519172832'), ('20131002145513'), ('20131003155044'), ('20140215004410'), ('20140216160144'), ('20140217025247'), ('20140522210252'), ('20140602153320'), ('20140606204236'), ('20140923231243'), ('20141111222212'), ('20150117041549'), ('20150129150300'), ('20150328040718'), ('20150328040918'), ('20150328074815'), ('20150416104151'), ('20150826032113'), ('20150826204841'), ('20150829203748'), ('20150901204841'), ('20150921154734'), ('20150922194413'), ('20150922233803'), ('20160220002317'), ('20160220002318'), ('20160222234001'), ('20160710170239'), ('20161108170423');
 
 

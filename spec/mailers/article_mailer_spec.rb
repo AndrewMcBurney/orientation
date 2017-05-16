@@ -95,7 +95,7 @@ RSpec.xdescribe ArticleMailer do
     end
   end
 
-  context ".send_rotten_notification_for(article, contributors)" do
+  context ".send_outdated_notification_for(article, contributors)" do
     let(:article) { create(:article) }
     let(:contributors) do
       [article.author, article.editor].compact.map do |user|
@@ -104,7 +104,7 @@ RSpec.xdescribe ArticleMailer do
     end
     let(:reporter) { create(:user) }
 
-    let(:mailer) { described_class.send_rotten_notification_for(article, contributors, reporter) }
+    let(:mailer) { described_class.send_outdated_notification_for(article, contributors, reporter) }
 
     subject { mailer }
 
