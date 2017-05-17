@@ -2,8 +2,8 @@
 
 - if @article.archived?
   %p.bulletin.bulletin--warning This article has been archived. Please don't trust the information displayed here.
-- if @article.rotten?
-  %p.bulletin.bulletin--warning This article was reported as rotten #{@article.rot_reporter} on #{@article.rotted_at}. The information is partially or completely out-of-date.
+- if @article.outdated?
+  %p.bulletin.bulletin--warning This article was reported as outdated by #{@article.outdatedness_reporter} on #{@article.outdated_at}. The information is partially or completely out-of-date.
 - if @article.stale?
   %p.bulletin.bulletin--notice.tct This article has gone stale. It hasn't been updated in a while so the information may be slightly out-of-date.
 
@@ -25,9 +25,12 @@
       .byline
         .byline-main
           .byline-author
-            = render partial: 'shared/icon', locals: { icon: 'user', padded: true }
-            = link_to @article.author, @article.author.link, class: 'label label--link label--link--invert'
-          = render partial: 'shared/icon', locals: { icon: 'clock-o', padded: true }
+            = render partial: 'shared/icon', locals: { icon: 'avatar', padded: true }
+            - if @article.author.object
+              = link_to @article.author, @article.author.link, class: 'label label--link label--link--invert'
+            - else
+              No author found.
+          = render partial: 'shared/icon', locals: { icon: 'clock', padded: true }
           %span.label.label--invert= @article.created_at_tag
         .byline-secondary
           - if @article.editor
@@ -53,13 +56,17 @@
 
           %li.list-item
             = link_to 'Delete', @article, class: 'btn btn--b', data: { method: :delete, confirm: "Are you sure?" }
+          %li.list-item
+            = link_to 'Versions', article_versions_path(@article), class: 'btn btn--b'
+
 
       %aside.g-b.g-b--m--1of3
+
         .switch.mbl
           = link_to 'Fresh', mark_fresh_article_url( @article ), method: :put,
             class: "btn switch-btn switch-btn--success #{ 'is-active' if @article.fresh? }"
-          = link_to 'Rotten', report_rot_article_url( @article ), method: :put,
-            class: "btn switch-btn switch-btn--error #{ 'is-active' if @article.rotten? }"
+          = link_to 'Request Update', new_article_update_request_url( @article ),
+            class: "btn switch-btn switch-btn--error #{ 'is-active' if @article.outdated? }"
 
         - toc = table_of_contents( @article.content || '' )
         - unless toc.empty?
@@ -77,7 +84,7 @@
               = link_to toggle_subscription_label, toggle_subscription_article_url( @article ), class: 'tsxs', method: :put
           - if @article.subscriptions.count > 0
             %ul.list.list--object
-              = render partial: 'subscription', collection: @article.subscriptions.decorate
+              = render partial: 'articles/subscription', collection: @article.subscriptions.decorate unless @article.subscriptions.blank?
           - else
             %p.mbf.tcs.tsi.tss Subscribe to receive updates about this article.
 
@@ -90,16 +97,6 @@
               = link_to toggle_endorsement_label, toggle_endorsement_article_url( @article ), class: 'tsxs', method: :put
           - if @article.endorsements.count > 0
             %ul.list.list--object
-              = render partial: 'endorsement', collection: @article.endorsements.decorate
+              = render partial: 'articles/endorsement', collection: @article.endorsements.decorate unless @article.endorsements.blank?
           - else
             %p.mbf.tcs.tsi.tss Endorse this article if you find it helpful.
-
-        .mbl
-          .split.bdrb.mbs.pbxs
-            .split-cell
-              %h2.label Metrics
-          .mbf.tcs.tsi.tss
-            = render partial: 'shared/icon', locals: { icon: 'user', padded: true }
-            = pluralize(@article.views.count, "reader")
-            = render partial: 'shared/icon', locals: { icon: 'eye', padded: true, klass: 'pls' }
-            = pluralize(@article.visits, "view")

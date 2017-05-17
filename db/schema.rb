@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170205222526) do
+ActiveRecord::Schema.define(version: 20170224025153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,13 +52,14 @@ ActiveRecord::Schema.define(version: 20170205222526) do
     t.integer  "editor_id"
     t.datetime "last_notified_author_at"
     t.datetime "archived_at"
-    t.datetime "rotted_at"
-    t.integer  "tags_count",              default: 0,     null: false
-    t.boolean  "guide",                   default: false
-    t.integer  "subscriptions_count",     default: 0
-    t.integer  "endorsements_count",      default: 0
-    t.integer  "visits",                  default: 0,     null: false
-    t.integer  "rot_reporter_id"
+    t.datetime "outdated_at"
+    t.integer  "tags_count",                  default: 0,     null: false
+    t.boolean  "guide",                       default: false
+    t.integer  "subscriptions_count",         default: 0
+    t.integer  "endorsements_count",          default: 0
+    t.integer  "visits",                      default: 0,     null: false
+    t.integer  "outdatedness_reporter_id"
+    t.datetime "change_last_communicated_at"
     t.index "to_tsvector('english'::regconfig, (title)::text)", name: "articles_title", using: :gin
     t.index "to_tsvector('english'::regconfig, content)", name: "articles_content", using: :gin
     t.index ["archived_at"], name: "index_articles_on_archived_at", using: :btree
@@ -69,6 +70,21 @@ ActiveRecord::Schema.define(version: 20170205222526) do
     t.integer "article_id"
     t.integer "tag_id"
     t.index ["article_id", "tag_id"], name: "index_articles_tags_on_article_id_and_tag_id", using: :btree
+  end
+
+  create_table "attachinary_files", force: :cascade do |t|
+    t.integer  "attachinariable_id"
+    t.string   "attachinariable_type"
+    t.string   "scope"
+    t.string   "public_id"
+    t.string   "version"
+    t.integer  "width"
+    t.integer  "height"
+    t.string   "format"
+    t.string   "resource_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["attachinariable_type", "attachinariable_id", "scope"], name: "by_scoped_parent", using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -107,6 +123,14 @@ ActiveRecord::Schema.define(version: 20170205222526) do
     t.index ["slug"], name: "index_tags_on_slug", unique: true, using: :btree
   end
 
+  create_table "update_requests", force: :cascade do |t|
+    t.integer  "article_id"
+    t.integer  "reporter_id"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "provider"
     t.string   "uid"
@@ -119,6 +143,18 @@ ActiveRecord::Schema.define(version: 20170205222526) do
     t.boolean  "active",      default: true
     t.text     "shtick"
     t.json     "preferences"
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+    t.text     "object_changes"
+    t.index ["created_at"], name: "index_versions_on_created_at", using: :btree
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
   end
 
 end

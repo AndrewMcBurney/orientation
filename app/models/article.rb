@@ -5,16 +5,29 @@ class Article < ApplicationRecord
   extend ActionView::Helpers::DateHelper
   extend FriendlyId
 
+  has_attachments :images, maximum: 20, accept: [:jpg, :png, :gif]
+
+  has_paper_trail on: [:update, :destroy],
+    only: [:title, :content], ignore: :change_last_communicated_at
+
+  def should_generate_new_friendly_id?
+    !has_friendly_id_slug? or title_changed?
+  end
+
+  def has_friendly_id_slug?
+    slugs.where(slug: friendly_id).exists?
+  end
+
   FRESHNESS_LIMIT = 7.days
   STALENESS_LIMIT = 6.months
 
+  FRESH = "This article is accurate."
+  OUTDATED = "This article needs major updates."
   FRESHNESS = "Updated in the last #{distance_of_time_in_words(FRESHNESS_LIMIT)}."
   STALENESS = "Updated over #{distance_of_time_in_words(STALENESS_LIMIT)} ago."
-  ROTTENNESS = "Deemed in need of an update."
+  OUTDATEDNESS = "Deemed in need of an update."
   POPULARITY = "Endorsed, subscribed, & visited."
   ARCHIVAL = "Outdated & ignored in searches."
-
-  friendly_id :title
 
   pg_search_scope :search,
     against: {
@@ -26,11 +39,16 @@ class Article < ApplicationRecord
       trigram: { threshold:  0.3 }
     }
 
+    # ranked_by: ":trigram"
+
+  friendly_id :title, use: [:slugged, :history]
+
   belongs_to :author, class_name: "User"
   belongs_to :editor, class_name: "User"
-  belongs_to :rot_reporter, class_name: "User"
+  belongs_to :outdatedness_reporter, class_name: "User"
 
   has_many :articles_tags, dependent: :destroy
+  has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
   has_many :subscribers, through: :subscriptions, class_name: "User", source: :user
@@ -49,18 +67,18 @@ class Article < ApplicationRecord
   scope :archived, -> { where.not(archived_at: nil) }
   scope :current, -> do
     where(archived_at: nil)
-      .order(rotted_at: :desc, updated_at: :desc, created_at: :desc)
+      .order(outdated_at: :desc, updated_at: :desc, created_at: :desc)
   end
   scope :fresh, -> do
     where(%Q["articles"."updated_at" >= ?], FRESHNESS_LIMIT.ago)
-      .where(archived_at: nil, rotted_at: nil)
+      .where(archived_at: nil, outdated_at: nil)
   end
   scope :guide,   -> { where(guide: true) }
-  scope :popular, -> do 
+  scope :popular, -> do
     order(endorsements_count: :desc, subscriptions_count: :desc, visits: :desc)
   end
-  scope :rotten,  -> { where.not(rotted_at: nil) }
-  scope :stale,   -> do 
+  scope :outdated,  -> { where.not(outdated_at: nil) }
+  scope :stale,   -> do
     where(%Q["articles"."updated_at" < ?], STALENESS_LIMIT.ago)
   end
   scope :alphabetical, -> { order(title: :asc) }
@@ -110,7 +128,7 @@ class Article < ApplicationRecord
   end
 
   def fresh?
-    !archived? && !rotten? && updated_at >= FRESHNESS_LIMIT.ago
+    !archived? && !outdated? && updated_at >= FRESHNESS_LIMIT.ago
   end
 
   def never_notified_author?
@@ -121,18 +139,23 @@ class Article < ApplicationRecord
     updated_at < STALENESS_LIMIT.ago
   end
 
-  def rotten?
-    rotted_at.present?
+  def outdated?
+    outdated_at.present?
   end
 
   def refresh!
-    update_attribute(:rotted_at, nil)
+    update_attribute(:outdated_at, nil)
     touch(:updated_at)
   end
 
-  def rot!(user_id)
-    update(rotted_at: Time.current, rot_reporter_id: user_id)
-    SendArticleRottenJob.perform_later(id, user_id)
+  def never_notified_author?
+    self.last_notified_author_at.nil?
+  end
+
+  # might need description here
+  def outdated!(user_id, description = '')
+    update(outdated_at: Time.current, outdatedness_reporter_id: user_id)
+    SendArticleOutdatedJob.perform_later(id, user_id, description)
   end
 
   def recently_notified_author?
@@ -215,7 +238,7 @@ class Article < ApplicationRecord
       existing_view.increment_count
 
       existing_view.save!
-    else 
+    else
       new_view = views.create!(user: user)
     end
   end
@@ -237,8 +260,8 @@ class Article < ApplicationRecord
       :created
     elsif archived_at?
       :archived
-    elsif rotted_at?
-      :rotten
+    elsif outdated_at?
+      :outdated
     else
       :updated
     end

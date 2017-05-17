@@ -5,32 +5,37 @@ Rails.application.routes.draw do
   get :sign_in, to: "sessions#new", as: :sign_in
   get :sign_out, to: "sessions#destroy", as: :sign_out
 
+  mount Attachinary::Engine => "/attachinary"
+
   resources :tags
 
-  resources :authors, only: [:index, :show, :new, :create, :update] do
-    put :toggle_status, to: "authors#toggle_status", as: :toggle_status
+  resources :authors, only: [:index, :show, :new, :create, :update, :destroy] do
+    put :toggle_status, to: "authors#toggle_status", as: "toggle_status"
     put :toggle_email_privacy
   end
 
   resources :articles do
+    resources :update_requests
+    resources :article_versions, as: 'versions', only: [:index, :show, :update]
     collection do
       get :fresh
       get :stale
-      get :rotten
+      get :outdated
       get :archived
       get :popular
+      get :search
     end
     member do
       put :toggle_subscription
       put :toggle_endorsement
-      put :report_rot
+      put :report_outdated
       put :mark_fresh
       put :toggle_archived
       get :subscriptions
     end
   end
 
-  resources :guides, only: [:show, :index]
+  resources :guides, only: [:index]
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
 

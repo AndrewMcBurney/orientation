@@ -1,4 +1,10 @@
 class ArticlesController < ApplicationController
+  include ArticlesHelper
+
+  before_action :set_paper_trail_whodunnit, only: [
+    :update,
+    :destroy
+  ]
   before_action :find_article_by_params, only: [
     :show,
     :edit,
@@ -11,13 +17,15 @@ class ArticlesController < ApplicationController
     :toggle_archived,
     :toggle_subscription,
     :toggle_endorsement,
-    :report_rot,
+    :report_outdated,
     :mark_fresh
   ]
   respond_to :html, :json
 
   def index
     @articles = fetch_articles
+
+    render :index, layout: false if request.xhr?
   end
 
   def show
@@ -56,9 +64,9 @@ class ArticlesController < ApplicationController
     render :index
   end
 
-  def rotten
-    @articles = fetch_articles(Article.current.rotten)
-    @page_title = "Rotten Articles"
+  def outdated
+    @articles = fetch_articles(Article.current.outdated)
+    @page_title = "Outdated Articles"
     render :index
   end
 
@@ -87,9 +95,9 @@ class ArticlesController < ApplicationController
     end
   end
 
-  def report_rot
-    @article.rot!(current_user.id)
-    flash[:notice] = "Successfully reported this article as rotten."
+  def report_outdated
+    @article.outdated!(current_user.id)
+    flash[:notice] = "Successfully reported this article as outdated."
     respond_with_article_or_redirect
   end
 
@@ -134,7 +142,16 @@ class ArticlesController < ApplicationController
     @subscriptions = decorate_article.subscriptions.decorate
   end
 
+  def search
+    if search_title_only?
+      @articles = fetch_articles_by_title
+    else
+      @articles = fetch_articles(Article.current)
+    end
+  end
+
   private
+
 
   def error_message(article)
     if article.errors.messages.key?(:friendly_id)
@@ -147,17 +164,23 @@ class ArticlesController < ApplicationController
   def article_params
     params.require(:article).permit(
       :created_at, :updated_at, :title, :content, :tag_tokens,
-      :author_id, :editor_id, :archived_at, :guide)
+      :author_id, :editor_id, :archived_at, :guide, images: [])
   end
 
   def decorate_article
     @article = ArticleDecorator.new(find_article_by_params)
   end
 
+  def fetch_articles_by_title
+    scope = Article.current
+    collection = scope.where('lower(title) like ?', "%#{params[:search].downcase}%")
+    ArticleDecorator.decorate_collection(collection)
+  end
+
   def fetch_articles(scope = nil)
     scope ||= Article.current
     query = Article.includes(:tags).text_search(params[:search], scope)
-    ArticleDecorator.decorate_collection(query)
+    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
   end
 
   def find_article_by_params

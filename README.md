@@ -6,6 +6,19 @@
 [![Dependency Status][gemnasium-image]][gemnasium]
 ![Ruby Version][ruby-version-image]
 
+## Continued Development of this Fork
+
+It's important to never merge code added to this repos into master directly.
+If you need the code to be deployed to production before the PR is accepted in the
+upstream, please merge your PR into pseudo-master branch and deploy that to Heroru.
+
+Current master is to be updated only with upstream's (orientation/orientation) master.
+
+### Deploying to Heroku
+
+`git push heroku pseudo-master:master --force`
+
+
 ## What is Orientation?
 
 Documentation is hard. People forget to write it, and they are asked the

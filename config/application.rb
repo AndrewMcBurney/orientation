@@ -37,7 +37,7 @@ module Orientation
 
     config.active_job.queue_adapter = :delayed_job
 
-    # We load environment-specific configuration values from 
+    # We load environment-specific configuration values from
     # config/orientation.yml into Rails.configuration.orientation
     #
     # You can find example values in config/orientation.example.yml

@@ -34,7 +34,7 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  config.mandrill_mailer.default_url_options =
+  # config.mandrill_mailer.default_url_options =
   config.action_mailer.default_url_options =
   config.action_controller.default_url_options =
   { host: 'www.example.com' }
