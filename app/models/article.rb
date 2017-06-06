@@ -131,7 +131,7 @@ class Article < ApplicationRecord
   end
 
   def archive!
-    update_attributes(:archived_at, Time.current)
+    update_attributes(archived_at: Time.current)
   end
 
   def archived?
@@ -163,7 +163,7 @@ class Article < ApplicationRecord
   end
 
   def refresh!
-    update_attributes(:outdated_at, nil)
+    update_attributes(outdated_at: nil)
     touch(:updated_at)
   end
 
@@ -226,7 +226,7 @@ class Article < ApplicationRecord
   end
 
   def unarchive!
-    update_attributes(:archived_at, nil)
+    update_attributes(archived_at: nil)
   end
 
   # @user - the user to unendorse this article for
