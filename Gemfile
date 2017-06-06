@@ -100,8 +100,6 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'derailed_benchmarks'
   gem 'stackprof'
-  gem 'database_cleaner'
-  gem 'climate_control'
 end
 
 group :development, :test do
