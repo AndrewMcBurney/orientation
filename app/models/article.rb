@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
   include Dateable
   include PgSearch
+  include AlgoliaSearch
 
   extend ActionView::Helpers::DateHelper
   extend FriendlyId
@@ -16,6 +17,24 @@ class Article < ApplicationRecord
 
   def has_friendly_id_slug?
     slugs.where(slug: friendly_id).exists?
+  end
+
+  algoliasearch do
+    # all attributes will be sent
+    # or we can uncomment following line and send specific attributes:
+    # list of attribute used to build an Algolia record
+    # attribute :author_id, :created_at, :title
+    # these are attributes I found in rails console via Article.new
+
+    # the `searchableAttributes` (formerly known as attributesToIndex) setting defines the attributes
+    # you want to search in: here `title`, `subtitle` & `description`.
+    # You need to list them by order of importance. `description` is tagged as
+    # `unordered` to avoid taking the position of a match into account in that attribute.
+    searchableAttributes ['title', 'content']
+
+    # the `customRanking` setting defines the ranking criteria use to compare two matching
+    # records in case their text-relevance is equal. It should reflect your record popularity.
+    customRanking ['desc(updated_at)']
   end
 
   FRESHNESS_LIMIT = 7.days
@@ -112,7 +131,7 @@ class Article < ApplicationRecord
   end
 
   def archive!
-    update_attribute(:archived_at, Time.current)
+    update_attributes(:archived_at, Time.current)
   end
 
   def archived?
@@ -144,7 +163,7 @@ class Article < ApplicationRecord
   end
 
   def refresh!
-    update_attribute(:outdated_at, nil)
+    update_attributes(:outdated_at, nil)
     touch(:updated_at)
   end
 
@@ -207,7 +226,7 @@ class Article < ApplicationRecord
   end
 
   def unarchive!
-    update_attribute(:archived_at, nil)
+    update_attributes(:archived_at, nil)
   end
 
   # @user - the user to unendorse this article for

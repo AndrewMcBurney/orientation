@@ -56,6 +56,22 @@
 
     , settings.inputDelay
 
+  # settings.$input.on 'input', ->
+  #   queryLength = settings.$input.val().length
+  #
+  #   console.log('current query length: ', queryLength)
+  #   console.log('searching for: ', settings.$input.val())
+  #
+  #   $('#search').on('input', ->
+  #     console.log('searching for: ', $(this).val())
+  #     index.search($(this).val(), {hitsPerPage: 10, page: 0})
+  #     .then (content) ->
+  #       console.log(content);
+  #       $results = content
+  #     .catch (err) ->
+  #       console.error(err);
+  #   )
+  #
 # -------------------------------------
 #   Usage
 # -------------------------------------
