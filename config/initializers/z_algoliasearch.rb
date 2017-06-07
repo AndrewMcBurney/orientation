@@ -7,5 +7,3 @@ AlgoliaSearch.configuration = {
   batch_timeout: 120,
   search_timeout: 5
 }
-
-Article.reindex
