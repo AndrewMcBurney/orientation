@@ -38,7 +38,7 @@
 
   settings.$input.on 'keyup', (e)->
     if e.which == 13
-      $(@).closest( settings.$element ).find( settings.$form ).trigger( 'submit' )
+      $(@).closest(settings.$element).find(settings.$form).trigger('submit')
       this.blur()
 
   settings.$input.on 'input', ->

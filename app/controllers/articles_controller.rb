@@ -179,8 +179,7 @@ class ArticlesController < ApplicationController
 
   def fetch_articles(scope = nil)
     scope ||= Article.current
-    index = Algolia::Index.new('Article')
-    search_results = index.search(params[:search])['hits']
+    search_results = Algolia::Index.new('Article').search(params[:search])['hits']
     results = search_results.collect do |a|
       scope.where(title: a['title'])[0]
     end
