@@ -179,8 +179,12 @@ class ArticlesController < ApplicationController
 
   def fetch_articles(scope = nil)
     scope ||= Article.current
-    query = Article.includes(:tags).text_search(params[:search], scope)
-    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
+    index = Algolia::Index.new('Article')
+    search_results = index.search(params[:search])['hits']
+    results = search_results.collect do |a|
+      scope.where(title: a['title'])[0]
+    end
+    ArticleDecorator.decorate_collection(results.compact, context: { search_params: params[:search] })
   end
 
   def find_article_by_params

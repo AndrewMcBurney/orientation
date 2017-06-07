@@ -52,6 +52,4 @@ jQuery ($) ->
     }
   ]).on('autocomplete:selected', (event, suggestion, dataset) ->
     $('#search').trigger( 'submit' )
-    console.log(suggestion, dataset);
-    console.log('bro. im trash.');
   );
