@@ -36,7 +36,7 @@
   hideSearch = ->
     settings.$results.hasClass( 'hide-results' )
 
-  settings.$input.on 'keyup', (e)->
+  settings.$input.on 'keyup', (e) ->
     if e.which == 13
       $(@).closest(settings.$element).find(settings.$form).trigger('submit')
       this.blur()
