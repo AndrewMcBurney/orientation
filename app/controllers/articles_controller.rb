@@ -53,31 +53,31 @@ class ArticlesController < ApplicationController
   end
 
   def fresh
-    @articles = fetch_articles(Article.current.fresh)
+    @articles = filter_fetch_articles(Article.current.fresh)
     @page_title = "Fresh Articles"
     render :index
   end
 
   def stale
-    @articles = fetch_articles(Article.current.stale)
+    @articles = filter_fetch_articles(Article.current.stale)
     @page_title = "Stale Articles"
     render :index
   end
 
   def outdated
-    @articles = fetch_articles(Article.current.outdated)
+    @articles = filter_fetch_articles(Article.current.outdated)
     @page_title = "Outdated Articles"
     render :index
   end
 
   def archived
-    @articles = fetch_articles(Article.archived)
+    @articles = filter_fetch_articles(Article.archived)
     @page_title = "Archived Articles"
     render :index
   end
 
   def popular
-    @articles = fetch_articles(Article.current.popular)
+    @articles = filter_fetch_articles(Article.current.popular)
     @page_title = "Popular Articles"
     render :index
   end
@@ -184,6 +184,12 @@ class ArticlesController < ApplicationController
       scope.where(title: a['title'])[0]
     end
     ArticleDecorator.decorate_collection(results.compact, context: { search_params: params[:search] })
+  end
+
+  def filter_fetch_articles(scope = nil)
+    scope ||= Article.current
+    query = Article.includes(:tags).text_search(params[:search], scope)
+    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
   end
 
   def find_article_by_params
