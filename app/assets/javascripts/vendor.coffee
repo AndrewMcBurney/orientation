@@ -24,3 +24,8 @@
 # -------------------------------------
 
 #= require moment/min/moment.min
+
+# -------------------------------------
+#   Algolia Search
+# -------------------------------------
+#= require algolia/v3/algoliasearch.min

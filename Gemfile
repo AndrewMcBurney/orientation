@@ -90,6 +90,9 @@ gem 'slack-notifier'
 # Transactional emails (see orientation.yml)
 gem 'mandrill_mailer'
 
+# Algolia Search
+gem 'algoliasearch-rails'
+
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
