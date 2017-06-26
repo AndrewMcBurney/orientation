@@ -28,6 +28,10 @@ class Article < ApplicationRecord
     # attributes you want to search in
     searchableAttributes ['title', 'content']
 
+    # the `attributesToSnippet` lets us specify which attributes we want to be able to get
+    # search for snippets (i.e. parts of the text that contain the query)
+    attributesToSnippet ['content:10']
+
     # the `customRanking` setting defines the ranking criteria use to compare two matching
     # records in case their text-relevance is equal. It should reflect the record popularity.
     customRanking ['desc(updated_at)']
