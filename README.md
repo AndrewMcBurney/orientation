@@ -83,7 +83,7 @@ See [Docker installation instructions](DOCKER.md).
 2. `cd` into the cloned directory.
 3. Run `rake orientation:install` in Terminal. This will install gem dependencies.
 4. Check the output in Terminal. You should see a line that says `Use the following value for the SECRET_KEY_BASE key:` with a long random string afterward. Copy the string and find the paste it in the `.env` file as the `SECRET_KEY_BASE`, around `line 20`.
-5. In the `.env` file, set the `DATABASE_USERNAME` and `DATABASE_PASSWORD`.
+5. In the `.env` file, set the `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `ALGOLIA_APP_ID`, `ALGOLIA_ADMIN_API_KEY`, and `ALGOLIA_SEARCH_ONLY_API_KEY` (see the .env.example file for instructions on how to get these variable values).
 6. Run `rake db:create db:setup` in Terminal.
 7. Run `rails s` to start the server.
 8. Visit at `localhost:3000`.
