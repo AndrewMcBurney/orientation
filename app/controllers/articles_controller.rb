@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ArticlesController < ApplicationController
   include ArticlesHelper
 
@@ -24,8 +26,12 @@ class ArticlesController < ApplicationController
 
   def index
     @articles = fetch_articles
+    @articles_ordered_by_title = Article.order(:title)
 
-    render :index, layout: false if request.xhr?
+    respond_with do |format|
+      format.html { render :index, layout: false if request.xhr? }
+      format.json { render json: @articles_ordered_by_title.tokens(params[:q]) }
+    end
   end
 
   def show
@@ -49,7 +55,7 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @tags = @article.tags.collect{ |t| Hash["id" => t.id, "name" => t.name] }
+    @tags = @article.tags.collect { |t| Hash["id" => t.id, "name" => t.name] }
   end
 
   def fresh
@@ -151,7 +157,6 @@ class ArticlesController < ApplicationController
   end
 
   private
-
 
   def error_message(article)
     if article.errors.messages.key?(:friendly_id)

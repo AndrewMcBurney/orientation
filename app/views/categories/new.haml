@@ -1,0 +1,8 @@
+- if !@category.valid? && !@category.new_record?
+  %p.bulletin.bulletin--warning
+    There's already a category with this title.
+
+%section.row
+  .cell.well.well--l
+
+    = render partial: 'form', locals: { label_text: 'Create a New Category', new_category: true }

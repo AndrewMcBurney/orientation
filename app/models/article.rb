@@ -67,6 +67,7 @@ class Article < ApplicationRecord
   belongs_to :outdatedness_reporter, class_name: "User"
 
   has_many :articles_tags, dependent: :destroy
+  has_many :categories, through: :category_guide_associations
   has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
@@ -260,6 +261,25 @@ class Article < ApplicationRecord
     else
       new_view = views.create!(user: user)
     end
+  end
+
+  def self.tokens(query)
+    articles = where(%Q["articles"."title" ILIKE ?], "%#{query}%")
+    new_article = { id: "<<<#{query}>>>", title: "New: \"#{query}\"" }
+
+    if articles.empty?
+      [new_article]
+    else
+      results = articles.collect { |t| Hash["id" => t.id, "title" => t.title] }
+      results.unshift(new_article) if articles.select{ |t| t.title.downcase == query.downcase }.empty?
+      results
+    end
+  end
+
+  # Returns array of article ids from tokens
+  def self.ids_from_tokens(tokens)
+    tokens.gsub!(/<<<(.+?)>>>/) { find(title: $1).id }
+    tokens.split(",")
   end
 
   private
