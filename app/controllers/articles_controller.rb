@@ -169,7 +169,7 @@ class ArticlesController < ApplicationController
   def article_params
     params.require(:article).permit(
       :created_at, :updated_at, :title, :content, :tag_tokens,
-      :author_id, :editor_id, :archived_at, :guide, images: [])
+      :author_id, :editor_id, :archived_at, images: [])
   end
 
   def decorate_article

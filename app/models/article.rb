@@ -93,7 +93,6 @@ class Article < ApplicationRecord
     where(%Q["articles"."updated_at" >= ?], FRESHNESS_LIMIT.ago)
       .where(archived_at: nil, outdated_at: nil)
   end
-  scope :guide,   -> { where(guide: true) }
   scope :popular, -> do
     order(endorsements_count: :desc, subscriptions_count: :desc, visits: :desc)
   end
@@ -251,7 +250,7 @@ class Article < ApplicationRecord
   # @user - the user to create an article vide for
   # Returns the article view if successfully created
   # Raises otherwise
-  def view(user: )
+  def view(user:)
     existing_view = views.find_by(user: user)
 
     if existing_view.present?

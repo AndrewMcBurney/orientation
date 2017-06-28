@@ -39,18 +39,6 @@
             %span.form-label.label Images
             = f.input :images, as: :attachinary
 
-        .card.card--b
-
-          .form-field.form-field--inline.mbf
-            = f.label :guide, class: 'dib mbxs' do
-              = f.input_field :guide, class: 'form-input form-input--checkbox'
-              %span.form-label.label Make This a Guide
-
-            %p.mbf.tcs.tsi.tss
-              Guides are displayed on the home page. They can group related articles for a subject or team.
-              You can use a "Support" guide to neatly arrange support-related
-              articles into a coherent guide linking to other articles.
-
         - if @article.author.blank?
           .form-field
             = f.input :author_id, as: :hidden, input_html: { value: current_user.try(:id) }

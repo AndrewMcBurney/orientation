@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170628195346) do
+ActiveRecord::Schema.define(version: 20170628220926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,11 +53,10 @@ ActiveRecord::Schema.define(version: 20170628195346) do
     t.datetime "last_notified_author_at"
     t.datetime "archived_at"
     t.datetime "outdated_at"
-    t.integer  "tags_count",                  default: 0,     null: false
-    t.boolean  "guide",                       default: false
+    t.integer  "tags_count",                  default: 0, null: false
     t.integer  "subscriptions_count",         default: 0
     t.integer  "endorsements_count",          default: 0
-    t.integer  "visits",                      default: 0,     null: false
+    t.integer  "visits",                      default: 0, null: false
     t.integer  "outdatedness_reporter_id"
     t.datetime "change_last_communicated_at"
     t.index "to_tsvector('english'::regconfig, (title)::text)", name: "articles_title", using: :gin
@@ -73,8 +72,8 @@ ActiveRecord::Schema.define(version: 20170628195346) do
   end
 
   create_table "attachinary_files", force: :cascade do |t|
-    t.integer  "attachinariable_id"
     t.string   "attachinariable_type"
+    t.integer  "attachinariable_id"
     t.string   "scope"
     t.string   "public_id"
     t.string   "version"

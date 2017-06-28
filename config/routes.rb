@@ -36,7 +36,6 @@ Rails.application.routes.draw do
   end
 
   resources :categories
-  resources :guides, only: [:index]
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
   resources :category_guide_associations, only: :index
