@@ -67,16 +67,17 @@ class Article < ApplicationRecord
   belongs_to :outdatedness_reporter, class_name: "User"
 
   has_many :articles_tags, dependent: :destroy
-  has_many :categories, through: :category_guide_associations
+  has_many :articles_categories, dependent: :destroy
   has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
+  has_many :categories, through: :articles_categories
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
   has_many :subscribers, through: :subscriptions, class_name: "User", source: :user
   has_many :endorsements, class_name: "ArticleEndorsement", dependent: :destroy
   has_many :endorsers, through: :endorsements, class_name: "User", source: :user
   has_many :views
 
-  attr_reader :tag_tokens
+  attr_reader :tag_tokens, :category_tokens
 
   validates :title, presence: true
 
@@ -217,6 +218,10 @@ class Article < ApplicationRecord
     subscriptions.reject { |s| s.user == editor }
   end
 
+  def category_tokens=(tokens)
+    self.category_ids = Category.ids_from_tokens(tokens)
+  end
+
   def tag_tokens=(tokens)
     self.tag_ids = Tag.ids_from_tokens(tokens)
   end
@@ -270,14 +275,14 @@ class Article < ApplicationRecord
       [new_article]
     else
       results = articles.collect { |t| Hash["id" => t.id, "title" => t.title] }
-      results.unshift(new_article) if articles.select{ |t| t.title.downcase == query.downcase }.empty?
+      results.unshift(new_article) if articles.select { |t| t.title.downcase == query.downcase }.empty?
       results
     end
   end
 
   # Returns array of article ids from tokens
   def self.ids_from_tokens(tokens)
-    tokens.gsub!(/<<<(.+?)>>>/) { find(title: $1).id }
+    tokens.gsub!(/<<<(.+?)>>>/) { create!(title: $1).id }
     tokens.split(",")
   end
 

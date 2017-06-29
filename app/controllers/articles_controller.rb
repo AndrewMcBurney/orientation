@@ -56,6 +56,8 @@ class ArticlesController < ApplicationController
 
   def edit
     @tags = @article.tags.collect { |t| Hash["id" => t.id, "name" => t.name] }
+    @categories =
+      @article.categories.collect { |c| Hash["id" => c.id, "label" => c.label] }
   end
 
   def fresh
@@ -168,7 +170,7 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(
-      :created_at, :updated_at, :title, :content, :tag_tokens,
+      :created_at, :updated_at, :title, :content, :tag_tokens, :category_tokens,
       :author_id, :editor_id, :archived_at, images: [])
   end
 

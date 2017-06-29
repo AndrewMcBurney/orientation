@@ -46,7 +46,7 @@ RSpec.describe CategoriesController, type: :controller do
 
       it "redirects to the created category" do
         post :create, params: { category: attributes }
-        expect(response).to redirect_to(edit_category_url(Category.last))
+        expect(response).to redirect_to(Category.last)
       end
     end
   end

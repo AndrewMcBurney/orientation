@@ -41,3 +41,9 @@ jQuery ($) ->
       prePopulate: $('#article_tag_tokens').data('load')
       preventDuplicates: true
     Orientation.algoliasearch('Article')
+
+  $('#article_category_tokens').tokenInput '/categories.json',
+      propertyToSearch: 'label',
+      prePopulate: $('#article_category_tokens').data('load')
+      preventDuplicates: true
+    Orientation.algoliasearch('Article')

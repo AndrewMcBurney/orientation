@@ -20,7 +20,7 @@ class Tag < ApplicationRecord
 
   def self.tokens(query)
     tags = where(%Q["tags"."name" ILIKE ?], "%#{query}%")
-    new_tag = {id: "<<<#{query}>>>", name: "New: \"#{query}\""}
+    new_tag = { id: "<<<#{query}>>>", name: "New: \"#{query}\"" }
     if tags.empty?
       [new_tag]
     else
