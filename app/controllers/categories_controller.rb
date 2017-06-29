@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 #
-# Categories controller for guide aggregations
+# Categories controller for article aggregations
 #
 class CategoriesController < ApplicationController
   before_action :set_articles, only: [:index, :show]
@@ -13,7 +13,7 @@ class CategoriesController < ApplicationController
 
   # GET /categories/:friendly_id
   def show
-    @guides = @category.articles
+    @category_articles = @category.articles
   end
 
   # GET /categories/new
@@ -23,7 +23,7 @@ class CategoriesController < ApplicationController
 
   # GET /categories/:friendly_id/edit
   def edit
-    @guides =
+    @category_articles =
       @category.articles.collect { |a| Hash["id" => a.id, "title" => a.title] }
   end
 
