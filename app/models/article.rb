@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Article < ApplicationRecord
   include Dateable
   include PgSearch
@@ -219,11 +221,15 @@ class Article < ApplicationRecord
   end
 
   def category_tokens=(tokens)
-    self.category_ids = Category.ids_from_tokens(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = CategoryFactory.new.build(attributes).map(&:id)
+    self.category_ids = existing_ids + new_ids
   end
 
   def tag_tokens=(tokens)
-    self.tag_ids = Tag.ids_from_tokens(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = TagFactory.new.build(attributes).map(&:id)
+    self.tag_ids = existing_ids + new_ids
   end
 
   def to_s
@@ -265,25 +271,6 @@ class Article < ApplicationRecord
     else
       new_view = views.create!(user: user)
     end
-  end
-
-  def self.tokens(query)
-    articles = where(%Q["articles"."title" ILIKE ?], "%#{query}%")
-    new_article = { id: "<<<#{query}>>>", title: "New: \"#{query}\"" }
-
-    if articles.empty?
-      [new_article]
-    else
-      results = articles.collect { |t| Hash["id" => t.id, "title" => t.title] }
-      results.unshift(new_article) if articles.select { |t| t.title.downcase == query.downcase }.empty?
-      results
-    end
-  end
-
-  # Returns array of article ids from tokens
-  def self.ids_from_tokens(tokens)
-    tokens.gsub!(/<<<(.+?)>>>/) { create!(title: $1).id }
-    tokens.split(",")
   end
 
   private

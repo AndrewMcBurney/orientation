@@ -26,11 +26,13 @@ class ArticlesController < ApplicationController
 
   def index
     @articles = fetch_articles
-    @articles_ordered_by_title = Article.order(:title)
+    @ordered_articles = Article.order(:title).limit(1000)
 
     respond_with do |format|
       format.html { render :index, layout: false if request.xhr? }
-      format.json { render json: @articles_ordered_by_title.tokens(params[:q]) }
+      format.json do
+        render json: TokenQuerier.new(query: params[:q], model: @ordered_articles, attribute: "title").tokens
+      end
     end
   end
 

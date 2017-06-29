@@ -14,7 +14,11 @@ class CategoriesController < ApplicationController
 
     respond_with do |format|
       format.html { render :index }
-      format.json { render json: @ordered_categories.tokens(params[:q]) }
+      format.json do
+        render json: TokenQuerier.new(
+          query: params[:q], model: @ordered_categories, attribute: "label"
+        ).tokens
+      end
     end
   end
 
@@ -63,7 +67,7 @@ class CategoriesController < ApplicationController
   private
 
   def articles
-    Article.includes(:tags).current
+    Article.includes(:tags).current.limit(1000)
   end
 
   def set_articles
