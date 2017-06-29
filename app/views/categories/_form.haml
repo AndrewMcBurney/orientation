@@ -15,7 +15,7 @@
             = f.label :article_tokens do
               %span.form-label.label
                 = "Articles (search for articles to add to category)".html_safe
-              = f.input_field :article_tokens, data: { load: @guides }
+              = f.input_field :article_tokens, data: { load: @category_articles }
 
         = f.button :submit, class: 'btn btn--a btn--l'
         = link_to 'Delete', @category, class: 'btn btn--b btn--l', data: { method: :delete, confirm: "Are you sure?" }

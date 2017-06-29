@@ -38,7 +38,6 @@ Rails.application.routes.draw do
   resources :categories
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
-  resources :category_guide_associations, only: :index
 
   get 'opensearchdescription.xml' => 'open_search/descriptions#show',
     format: false,
