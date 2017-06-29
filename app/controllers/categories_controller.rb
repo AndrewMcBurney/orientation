@@ -9,7 +9,14 @@ class CategoriesController < ApplicationController
   before_action :set_category, only: [:show, :edit, :update, :destroy]
 
   # GET /categories
-  def index() end
+  def index
+    @ordered_categories = Category.order(:label)
+
+    respond_with do |format|
+      format.html { render :index }
+      format.json { render json: @ordered_categories.tokens(params[:q]) }
+    end
+  end
 
   # GET /categories/:friendly_id
   def show
@@ -32,8 +39,7 @@ class CategoriesController < ApplicationController
     @category = Category.new(category_params)
 
     if @category.save
-      redirect_to edit_category_url(@category),
-                  notice: "Category was successfully created."
+      redirect_to @category, notice: "Category was successfully created."
     else
       render :new, notice: "Category not created."
     end
