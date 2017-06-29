@@ -13,29 +13,8 @@ class Category < ApplicationRecord
   attr_reader :article_tokens
 
   def article_tokens=(tokens)
-    self.article_ids = Article.ids_from_tokens(tokens)
-  end
-
-  def self.tokens(query)
-    categories = where(%Q["categories"."label" ILIKE ?], "%#{query}%")
-    new_category = { id: "<<<#{query}>>>", label: "New: \"#{query}\"" }
-
-    if categories.empty?
-      [new_category]
-    else
-      results = categories.collect { |t| Hash["id" => t.id, "label" => t.label] }
-
-      if categories.select { |t| t.label.downcase == query.downcase }.empty?
-        results.unshift(new_category)
-      end
-
-      results
-    end
-  end
-
-  # Returns array of category ids from tokens
-  def self.ids_from_tokens(tokens)
-    tokens.gsub!(/<<<(.+?)>>>/) { create!(label: $1).id }
-    tokens.split(",")
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = ArticleFactory.new.build(attributes).map(&:id)
+    self.article_ids = existing_ids + new_ids
   end
 end
