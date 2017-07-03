@@ -6,6 +6,6 @@
 #
 class ModelFactory
   def build(attributes)
-    attributes.map { |a| model.create!(attribute => a) }
+    attributes.map { |a| model.create(attribute => a) }
   end
 end
