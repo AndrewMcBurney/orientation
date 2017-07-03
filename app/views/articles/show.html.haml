@@ -7,12 +7,20 @@
 - if @article.stale?
   %p.bulletin.bulletin--notice.tct This article has gone stale. It hasn't been updated in a while so the information may be slightly out-of-date.
 
+- if @article.guide?
+  .row.row--highlight.row--pattern
+    .cell.well.well--l
+
+      %h1.tci.tac= @article.title
+
 %section.row
   %article.cell.well.well--l
 
     %header.mbl
-      = render 'tags/tags', tags: @article.tags
-      %h1.tsl.ts--s--xl.ts--m--xxl= @article.title
+      - unless @article.guide?
+        = render 'tags/tags', tags: @article.tags
+
+        %h1.tsl.ts--s--xl.ts--m--xxl= @article.title
 
       .byline
         .byline-main

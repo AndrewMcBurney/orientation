@@ -1,12 +1,15 @@
 - page_title @article.title
 
 = render "state"
+= render "guide_header"
 
 %section.row
   %article.cell.well.well--l
     %header.mbl
-      = render 'tags/tags', tags: @article.tags
-      %h1.tsl.ts--s--xl.ts--m--xxl= @article.title
+      - unless @article.guide?
+        = render 'tags/tags', tags: @article.tags
+
+        %h1.tsl.ts--s--xl.ts--m--xxl= @article.title
 
       = render "byline"
 

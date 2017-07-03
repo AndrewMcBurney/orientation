@@ -4,11 +4,8 @@ class TagsController < ApplicationController
   def index
     @ordered_tags = Tag.more_than_one_article.by_article_count
     @tags = Tag.order(:name)
-
     respond_with do |format|
-      format.json do
-        render json: TokenQuerier.new(query: params[:q], model: @tags, attribute: "name").tokens
-      end
+      format.json { render json: @tags.tokens(params[:q]) }
     end
   end
 
