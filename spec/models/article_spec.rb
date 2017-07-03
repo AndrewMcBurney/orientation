@@ -106,47 +106,6 @@ RSpec.describe Article do
     end
   end
 
-  describe '#guide?' do
-    let(:article) { create(:article) }
-
-    context 'when the article is not set as a guide' do
-      it "returns false" do
-        expect(article.guide?).to be_falsey
-      end
-    end
-
-    context 'when the article is set as a guide' do\
-      subject(:make_guide) { article.update_attribute(:guide, true) }
-
-      it "returns true" do
-        expect { make_guide }.to change { article.guide? }.from(false).to(true)
-      end
-    end
-
-    context 'when an article is no longer a guide' do
-      before { article.update_attribute(:guide, false) }
-
-      it "returns false" do
-        expect(article.guide?).to be_falsey
-      end
-    end
-  end
-
-  describe '.guide' do
-    let!(:guide_article) { create(:article, :guide) }
-    let!(:article) { create(:article) }
-
-    subject(:guide) { Article.guide }
-
-    it "includes guide articles" do
-      expect(guide).to include(guide_article)
-    end
-
-    it "doesn't include non-guide articles" do
-      expect(guide).to_not include(article)
-    end
-  end
-
   describe '.popular' do
     before { 5.times { create(:article) } }
 

@@ -61,7 +61,6 @@ Article.find_or_create_by(title: "About").tap do |article|
   MARKDOWN
   article.author = orientation
   article.tags = [tag]
-  article.guide = true
   article.save
 end
 
