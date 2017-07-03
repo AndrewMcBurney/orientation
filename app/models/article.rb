@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Article < ApplicationRecord
   include Dateable
   include PgSearch
@@ -72,15 +74,17 @@ class Article < ApplicationRecord
   belongs_to :outdatedness_reporter, class_name: "User"
 
   has_many :articles_tags, dependent: :destroy
+  has_many :articles_categories, dependent: :destroy
   has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
+  has_many :categories, through: :articles_categories
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
   has_many :subscribers, through: :subscriptions, class_name: "User", source: :user
   has_many :endorsements, class_name: "ArticleEndorsement", dependent: :destroy
   has_many :endorsers, through: :endorsements, class_name: "User", source: :user
   has_many :views
 
-  attr_reader :tag_tokens
+  attr_reader :tag_tokens, :category_tokens
 
   validates :title, presence: true
 
@@ -97,7 +101,6 @@ class Article < ApplicationRecord
     where(%Q["articles"."updated_at" >= ?], FRESHNESS_LIMIT.ago)
       .where(archived_at: nil, outdated_at: nil)
   end
-  scope :guide,   -> { where(guide: true) }
   scope :popular, -> do
     order(endorsements_count: :desc, subscriptions_count: :desc, visits: :desc)
   end
@@ -222,8 +225,16 @@ class Article < ApplicationRecord
     subscriptions.reject { |s| s.user == editor }
   end
 
+  def category_tokens=(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = CategoryFactory.new.build(attributes).map(&:id)
+    self.category_ids = existing_ids + new_ids
+  end
+
   def tag_tokens=(tokens)
-    self.tag_ids = Tag.ids_from_tokens(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = TagFactory.new.build(attributes).map(&:id)
+    self.tag_ids = existing_ids + new_ids
   end
 
   def to_s
@@ -255,7 +266,7 @@ class Article < ApplicationRecord
   # @user - the user to create an article vide for
   # Returns the article view if successfully created
   # Raises otherwise
-  def view(user: )
+  def view(user:)
     existing_view = views.find_by(user: user)
 
     if existing_view.present?
