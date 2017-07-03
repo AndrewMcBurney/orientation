@@ -1,16 +1,45 @@
 # *************************************
 #
-#   Algoliasearch
-#   -> Search functionality
+#   Document Ready
 #
 # *************************************
 
-@Orientation.algoliasearch = ( initIndex ) ->
+jQuery ($) ->
+
+# ----- Functions ----- #
+  Orientation.accordion()
+  Orientation.autoSubmit()
+  Orientation.dropdown()
+  Orientation.headingLink()
+  Orientation.shortcut()
+
+  Orientation.search
+    hiddenClass: 'dn'
+
+  # ----- Modules ----- #
+
+  Orientation.editor.init()
+  Orientation.selectText.init()
+  Orientation.tableBank.init()
+
+  # ----- Vendor ----- #
+
+  # Bootstrap
+
+  $('[data-toggle="tooltip"]').tooltip
+    container: 'body'
+
+  # jquery-ujs
+
+  $('#article_tag_tokens').tokenInput '/tags.json',
+    prePopulate: $('#article_tag_tokens').data('load')
+    preventDuplicates: true
+
   if (typeof autocomplete != 'undefined')
     algoliaAppId = '<%= ENV.fetch("ALGOLIA_APP_ID") %>';
     algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>';
     client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey);
-    index = client.initIndex(initIndex);
+    index = client.initIndex('Article');
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
         return '<div class="search-result-title">' +

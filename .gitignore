@@ -28,12 +28,9 @@ config/database.yml
 coverage/
 
 /.env
-/.env.test
-/.env.development
 
 /public/uploads/
 .DS_Store
 
 # Node modules
 /node_modules
-/bower_components

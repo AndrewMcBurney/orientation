@@ -11,7 +11,6 @@ class UpdateRequestsController < ApplicationController
   end
 
   private
-
   def fetch_article
     @article = Article.friendly.find(params[:article_id])
   end
