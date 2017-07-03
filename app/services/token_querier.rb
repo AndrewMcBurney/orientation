@@ -5,6 +5,8 @@
 # returned
 #
 class TokenQuerier
+  include DelimiterHelper
+
   attr_reader :query, :model, :attribute, :collection, :item
   def initialize(args)
     @query = args[:query]
@@ -21,7 +23,7 @@ class TokenQuerier
 
   def query_tokens
     @collection = model.where(%("#{model.table_name}"."#{attribute}" ILIKE ?), "%#{query}%")
-    @item = { id: "<<<#{query}>>>", attribute => "New: \"#{query}\"" }
+    @item = { id: delimit_string(query), attribute => "New: \"#{query}\"" }
   end
 
   def parse_results

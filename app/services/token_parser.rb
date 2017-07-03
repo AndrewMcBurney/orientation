@@ -8,6 +8,8 @@
 # and attributes delimited by <<<>>>>
 #
 class TokenParser
+  include DelimiterHelper
+
   attr_reader :tokens
   def initialize(token_string)
     @tokens = token_string.split(",")
@@ -22,10 +24,6 @@ class TokenParser
   # Separates the existing ids from the attrbutes belonging to uninitialized model
   # objects based on the <<<>>> delimiter
   def split_tokens
-    tokens.partition { |token| token.match(/<<<(.+?)>>>/) }
-  end
-
-  def strip_delimiter(token)
-    token.gsub(/<<<|>>>/, "")
+    tokens.partition { |token| match_delimiter_string(token) }
   end
 end
