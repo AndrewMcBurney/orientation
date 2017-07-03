@@ -32,7 +32,14 @@ class ArticlesController < ApplicationController
 
   def index
     @articles = fetch_articles
-    render_search_page
+    @ordered_articles = Article.order(:title).limit(1000)
+
+    respond_with do |format|
+      format.html { render :index, layout: false if request.xhr? }
+      format.json do
+        render json: TokenQuerier.new(query: params[:q], model: @ordered_articles, attribute: "title").tokens
+      end
+    end
   end
 
   def show
@@ -56,7 +63,9 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @tags = @article.tags.collect{ |t| Hash["id" => t.id, "name" => t.name] }
+    @tags = @article.tags.collect { |t| Hash["id" => t.id, "name" => t.name] }
+    @categories =
+      @article.categories.collect { |c| Hash["id" => c.id, "label" => c.label] }
   end
 
   def fresh
@@ -167,8 +176,8 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(
-      :created_at, :updated_at, :title, :content, :tag_tokens,
-      :author_id, :editor_id, :archived_at, :guide, images: [])
+      :created_at, :updated_at, :title, :content, :tag_tokens, :category_tokens,
+      :author_id, :editor_id, :archived_at, images: [])
   end
 
   def decorate_article
