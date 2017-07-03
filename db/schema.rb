@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170629204545) do
+ActiveRecord::Schema.define(version: 20170224025153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,24 +53,17 @@ ActiveRecord::Schema.define(version: 20170629204545) do
     t.datetime "last_notified_author_at"
     t.datetime "archived_at"
     t.datetime "outdated_at"
-    t.integer  "tags_count",                  default: 0, null: false
+    t.integer  "tags_count",                  default: 0,     null: false
+    t.boolean  "guide",                       default: false
     t.integer  "subscriptions_count",         default: 0
     t.integer  "endorsements_count",          default: 0
-    t.integer  "visits",                      default: 0, null: false
+    t.integer  "visits",                      default: 0,     null: false
     t.integer  "outdatedness_reporter_id"
     t.datetime "change_last_communicated_at"
     t.index "to_tsvector('english'::regconfig, (title)::text)", name: "articles_title", using: :gin
     t.index "to_tsvector('english'::regconfig, content)", name: "articles_content", using: :gin
     t.index ["archived_at"], name: "index_articles_on_archived_at", using: :btree
     t.index ["slug"], name: "index_articles_on_slug", unique: true, using: :btree
-  end
-
-  create_table "articles_categories", force: :cascade do |t|
-    t.integer "article_id"
-    t.integer "category_id"
-    t.index ["article_id", "category_id"], name: "index_articles_categories_on_article_id_and_category_id", using: :btree
-    t.index ["article_id"], name: "index_articles_categories_on_article_id", using: :btree
-    t.index ["category_id"], name: "index_articles_categories_on_category_id", using: :btree
   end
 
   create_table "articles_tags", force: :cascade do |t|
@@ -80,8 +73,8 @@ ActiveRecord::Schema.define(version: 20170629204545) do
   end
 
   create_table "attachinary_files", force: :cascade do |t|
-    t.string   "attachinariable_type"
     t.integer  "attachinariable_id"
+    t.string   "attachinariable_type"
     t.string   "scope"
     t.string   "public_id"
     t.string   "version"
@@ -92,14 +85,6 @@ ActiveRecord::Schema.define(version: 20170629204545) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["attachinariable_type", "attachinariable_id", "scope"], name: "by_scoped_parent", using: :btree
-  end
-
-  create_table "categories", force: :cascade do |t|
-    t.string   "label"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "slug"
-    t.index ["slug"], name: "index_categories_on_slug", unique: true, using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

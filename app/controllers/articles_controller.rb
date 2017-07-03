@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ArticlesController < ApplicationController
   include ArticlesHelper
 
@@ -26,14 +24,8 @@ class ArticlesController < ApplicationController
 
   def index
     @articles = fetch_articles
-    @ordered_articles = Article.order(:title).limit(1000)
 
-    respond_with do |format|
-      format.html { render :index, layout: false if request.xhr? }
-      format.json do
-        render json: TokenQuerier.new(query: params[:q], model: @ordered_articles, attribute: "title").tokens
-      end
-    end
+    render :index, layout: false if request.xhr?
   end
 
   def show
@@ -57,9 +49,7 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @tags = @article.tags.collect { |t| Hash["id" => t.id, "name" => t.name] }
-    @categories =
-      @article.categories.collect { |c| Hash["id" => c.id, "label" => c.label] }
+    @tags = @article.tags.collect{ |t| Hash["id" => t.id, "name" => t.name] }
   end
 
   def fresh
@@ -162,6 +152,7 @@ class ArticlesController < ApplicationController
 
   private
 
+
   def error_message(article)
     if article.errors.messages.key?(:friendly_id)
       "#{article.title} is a reserved word."
@@ -172,8 +163,8 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(
-      :created_at, :updated_at, :title, :content, :tag_tokens, :category_tokens,
-      :author_id, :editor_id, :archived_at, images: [])
+      :created_at, :updated_at, :title, :content, :tag_tokens,
+      :author_id, :editor_id, :archived_at, :guide, images: [])
   end
 
   def decorate_article

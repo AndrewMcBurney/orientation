@@ -23,6 +23,10 @@ FactoryGirl.define do
       outdated_at Time.now
     end
 
+    trait :guide do
+      guide true
+    end
+
     trait :popular do
       after(:create) do |article|
         article.count_visit
