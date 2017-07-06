@@ -20,21 +20,13 @@ class Article < ApplicationRecord
   end
 
   algoliasearch do
-    # all attributes will be sent to build the Algolia records
-    # or we can uncomment following line and send specific attributes:
-    # attribute :author_id, :created_at, :title, :content, :visits
+    attributes :title, :content
+    attribute :tags do
+      tags.map { |t| { name: t.name } }
+    end
 
-    # the `searchableAttributes` (formerly known as attributesToIndex) setting defines the
-    # attributes you want to search in
-    searchableAttributes ['title', 'content']
-
-    # the `attributesToSnippet` lets us specify which attributes we want to be able to get
-    # search for snippets (i.e. parts of the text that contain the query)
-    attributesToSnippet ['content:10']
-
-    # the `customRanking` setting defines the ranking criteria use to compare two matching
-    # records in case their text-relevance is equal. It should reflect the record popularity.
-    customRanking ['desc(updated_at)']
+    searchableAttributes %w[title tags content]
+    ranking ['asc(title)', 'exact', 'attribute', 'proximity']
   end
 
   FRESHNESS_LIMIT = 7.days
