@@ -2,6 +2,7 @@ class GuidesController < ApplicationController
   include ArticlesHelper
 
   def index
+    @count = count
     @guides = ArticleDecorator.decorate_collection(guides)
     @articles = ArticleDecorator.decorate_collection(articles)
 
@@ -9,6 +10,10 @@ class GuidesController < ApplicationController
   end
 
   private
+
+  def count
+    articles.try(:count) || 0
+  end
 
   def guides
     Article.guide.current.alphabetical
