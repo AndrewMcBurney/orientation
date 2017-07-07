@@ -36,10 +36,12 @@ jQuery ($) ->
     preventDuplicates: true
 
   if (typeof autocomplete != 'undefined')
-    algoliaAppId = '<%= ENV.fetch("ALGOLIA_APP_ID") %>';
-    algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>';
-    client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey);
-    index = client.initIndex('Article');
+    algoliaAppId = '<%= ENV.fetch("ALGOLIA_APP_ID") %>'
+    algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>'
+
+    client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey)
+    index = client.initIndex('Article')
+
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
         return '<div class="search-result-title">' +
@@ -50,7 +52,7 @@ jQuery ($) ->
 
     ac = autocomplete('#search', { hint: true }, [
       {
-        source: autocomplete.sources.hits(index, { hitsPerPage: 5 }),
+        source: autocomplete.sources.hits(index, Orientation.searchOptions()),
         displayKey: 'title',
         templates: autocomplete_suggestion_template
       }
