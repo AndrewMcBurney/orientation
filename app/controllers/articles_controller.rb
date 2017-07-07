@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ArticlesController < ApplicationController
   include ArticlesHelper
 
@@ -24,8 +26,7 @@ class ArticlesController < ApplicationController
 
   def index
     @articles = fetch_articles
-
-    render :index, layout: false if request.xhr?
+    render_search_page
   end
 
   def show
@@ -53,33 +54,33 @@ class ArticlesController < ApplicationController
   end
 
   def fresh
-    @articles = filter_fetch_articles(Article.current.fresh)
+    @articles = fetch_articles(Article.current.fresh, "fresh")
     @page_title = "Fresh Articles"
-    render :index
+    render_search_page
   end
 
   def stale
-    @articles = filter_fetch_articles(Article.current.stale)
+    @articles = fetch_articles(Article.current.stale, "stale")
     @page_title = "Stale Articles"
-    render :index
+    render_search_page
   end
 
   def outdated
-    @articles = filter_fetch_articles(Article.current.outdated)
+    @articles = fetch_articles(Article.current.outdated, "outdated")
     @page_title = "Outdated Articles"
-    render :index
+    render_search_page
   end
 
   def archived
-    @articles = filter_fetch_articles(Article.archived)
+    @articles = fetch_articles(Article.archived, "archived")
     @page_title = "Archived Articles"
-    render :index
+    render_search_page
   end
 
   def popular
-    @articles = filter_fetch_articles(Article.current.popular)
+    @articles = fetch_articles(Article.current.popular)
     @page_title = "Popular Articles"
-    render :index
+    render_search_page
   end
 
   def toggle_archived
@@ -146,12 +147,13 @@ class ArticlesController < ApplicationController
     if search_title_only?
       @articles = fetch_articles_by_title
     else
-      @articles = fetch_articles(Article.current)
+      @articles = fetch_articles
     end
+
+    render_search_page
   end
 
   private
-
 
   def error_message(article)
     if article.errors.messages.key?(:friendly_id)
@@ -171,25 +173,25 @@ class ArticlesController < ApplicationController
     @article = ArticleDecorator.new(find_article_by_params)
   end
 
+  def render_search_page
+    respond_to do |format|
+      format.html { render :index }
+      format.js   { render :index, layout: false }
+    end
+  end
+
   def fetch_articles_by_title
     scope = Article.current
     collection = scope.where('lower(title) like ?', "%#{params[:search].downcase}%")
     ArticleDecorator.decorate_collection(collection)
   end
 
-  def fetch_articles(scope = nil)
+  def fetch_articles(scope = nil, filter = nil)
     scope ||= Article.current
-    search_results = Algolia::Index.new('Article').search(params[:search])['hits']
-    results = search_results.collect do |a|
-      scope.where(title: a['title'])[0]
-    end
-    ArticleDecorator.decorate_collection(results.compact, context: { search_params: params[:search] })
-  end
+    search_results = Algolia::Index.new("Article").search(params[:search], { tagFilters: filter })["hits"]
+    results = search_results.collect { |a| scope.where(title: a["title"])[0] }.compact
 
-  def filter_fetch_articles(scope = nil)
-    scope ||= Article.current
-    query = Article.includes(:tags).text_search(params[:search], scope)
-    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
+    ArticleDecorator.decorate_collection(results, context: { search_params: params[:search] })
   end
 
   def find_article_by_params
