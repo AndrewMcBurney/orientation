@@ -25,6 +25,8 @@ class Article < ApplicationRecord
       tags.map { |t| { name: t.name } }
     end
 
+    tags { %w[fresh stale outdated archived].select { |tag| send("#{tag}?") } }
+
     searchableAttributes %w[title tags content]
     ranking ['asc(title)', 'exact', 'attribute', 'proximity']
   end
