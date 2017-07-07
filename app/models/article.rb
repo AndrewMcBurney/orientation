@@ -25,7 +25,18 @@ class Article < ApplicationRecord
       tags.map { |t| { name: t.name } }
     end
 
-    tags { %w[fresh stale outdated archived].select { |tag| send("#{tag}?") } }
+    #
+    # AlgoliaSearch tags for filtering collections, different from the model's
+    # 'tags' attribute
+    #
+    # Client usage:
+    #  Algolia::Index.new("Article").search(params[:search], { tagFilters: filter })["hits"]
+    #
+    # When no tags are present, defaults to searching all records
+    #
+    tags do
+      %w[fresh stale outdated archived].select { |tag| public_send("#{tag}?") }
+    end
 
     searchableAttributes %w[title tags content]
     ranking ['asc(title)', 'exact', 'attribute', 'proximity']

@@ -22,6 +22,12 @@ class ArticlesController < ApplicationController
     :report_outdated,
     :mark_fresh
   ]
+  before_action :fetch_articles_with_filter, only: [
+    :fresh,
+    :stale,
+    :outdated,
+    :archived
+  ]
   respond_to :html, :json
 
   def index
@@ -54,25 +60,21 @@ class ArticlesController < ApplicationController
   end
 
   def fresh
-    @articles = fetch_articles(Article.current.fresh, "fresh")
     @page_title = "Fresh Articles"
     render_search_page
   end
 
   def stale
-    @articles = fetch_articles(Article.current.stale, "stale")
     @page_title = "Stale Articles"
     render_search_page
   end
 
   def outdated
-    @articles = fetch_articles(Article.current.outdated, "outdated")
     @page_title = "Outdated Articles"
     render_search_page
   end
 
   def archived
-    @articles = fetch_articles(Article.archived, "archived")
     @page_title = "Archived Articles"
     render_search_page
   end
@@ -173,6 +175,10 @@ class ArticlesController < ApplicationController
     @article = ArticleDecorator.new(find_article_by_params)
   end
 
+  def fetch_articles_with_filter
+    @articles = fetch_articles(Article.current.public_send(action_name), action_name)
+  end
+
   def render_search_page
     respond_to do |format|
       format.html { render :index }
@@ -187,7 +193,8 @@ class ArticlesController < ApplicationController
   end
 
   def fetch_articles(scope = nil, filter = nil)
-    scope ||= Article.current
+    scope  ||= Article.current
+    @count ||= scope.try(:count) || 0
     search_results = Algolia::Index.new("Article").search(params[:search], { tagFilters: filter })["hits"]
     results = search_results.collect { |a| scope.where(title: a["title"])[0] }.compact
 

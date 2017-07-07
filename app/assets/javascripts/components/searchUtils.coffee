@@ -7,18 +7,13 @@
 # *************************************
 
 # Returns JSON object denoting filter for client-side algoliasarch autocomplete
-@Orientation.matchFilter = ( title ) ->
-  filter = title.split(' ')[0].toLowerCase() || ''
-
-  if filter is 'fresh' or filter is 'stale' or filter is 'outdated' or
-     filter is 'archived'
-    { tagFilters: filter }
-  else
-    {}
+@Orientation.getFilter = ->
+  filterData = $('#algolia-filter').val()
+  if filterData then { tagFilters: filterData } else {}
 
 
 # Merges two JSON objects to resulting 'search_options' object for use with
 # algoliasearch autocomplete
-@Orientation.searchOptions = () ->
-  filter = Orientation.matchFilter(document.title)
+@Orientation.searchOptions = ->
+  filter = Orientation.getFilter()
   $.extend({ hitsPerPage: 5 }, filter)
