@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :categories
+  resources :categories, path: "teams"
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
 
