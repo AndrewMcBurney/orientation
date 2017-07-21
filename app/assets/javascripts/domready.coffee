@@ -35,14 +35,14 @@ jQuery ($) ->
       propertyToSearch: 'title',
       prePopulate: $('#category_article_tokens').data('load')
       preventDuplicates: true
-    Orientation.algoliasearch('Category')
+    Orientation.algoliasearch('Article')
 
   $('#article_tag_tokens').tokenInput '/tags.json',
       prePopulate: $('#article_tag_tokens').data('load')
       preventDuplicates: true
     Orientation.algoliasearch('Article')
 
-  $('#article_category_tokens').tokenInput '/categories.json',
+  $('#article_category_tokens').tokenInput '/teams.json',
       propertyToSearch: 'label',
       prePopulate: $('#article_category_tokens').data('load')
       preventDuplicates: true

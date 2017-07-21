@@ -15,7 +15,10 @@
 
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
-        return '<div class="search-result-title">' +
+        categories = (category.name for category in hit.categories).join(', ')
+        label = if categories?.length != 0 then "#{categories}: " else ""
+
+        return '<div class="search-result-title">' + label +
         hit._highlightResult.title.value + '</div>' +
         '<div class="search-result-content-snippet">"...' +
         hit._snippetResult.content.value + '..."</div>'

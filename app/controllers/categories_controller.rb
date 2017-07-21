@@ -14,6 +14,7 @@ class CategoriesController < ApplicationController
 
     respond_with do |format|
       format.html { render :index }
+      format.js   { render "articles/index", layout: false }
       format.json do
         render json: TokenQuerier.new(
           query: params[:q], model: @ordered_categories, attribute: "label"
@@ -43,16 +44,16 @@ class CategoriesController < ApplicationController
     @category = Category.new(category_params)
 
     if @category.save
-      redirect_to @category, notice: "Category was successfully created."
+      redirect_to @category, notice: "Team was successfully created."
     else
-      render :new, notice: "Category not created."
+      render :new, notice: "Team not created."
     end
   end
 
   # PATCH/PUT /categories/:friendly_id
   def update
     if @category.update(category_params)
-      redirect_to @category, notice: "Category was successfully updated."
+      redirect_to @category, notice: "Team was successfully updated."
     else
       render :edit
     end
@@ -61,7 +62,7 @@ class CategoriesController < ApplicationController
   # DELETE /categories/:friendly_id
   def destroy
     @category.destroy
-    redirect_to categories_url, notice: "Category was successfully destroyed."
+    redirect_to categories_url, notice: "Team was successfully destroyed."
   end
 
   private
@@ -71,7 +72,7 @@ class CategoriesController < ApplicationController
   end
 
   def set_articles
-    @articles = ArticleDecorator.decorate_collection(articles)
+    @articles = fetch_articles
   end
 
   def categories
@@ -88,5 +89,14 @@ class CategoriesController < ApplicationController
 
   def category_params
     params.require(:category).permit(:label, :article_tokens)
+  end
+
+  def fetch_articles
+    scope = Article.current
+    @count = scope.try(:count) || 0
+    search_results = Algolia::Index.new("Article").search(params[:search])["hits"]
+    results = search_results.collect { |a| scope.where(title: a["title"])[0] }.compact
+
+    ArticleDecorator.decorate_collection(results, context: { search_params: params[:search] })
   end
 end
