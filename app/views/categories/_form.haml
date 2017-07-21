@@ -7,14 +7,16 @@
       = simple_form_for @category do | f |
 
         .form-field
-          = f.input_field :label, placeholder: 'Enter a Category Label',
+          = f.input_field :label, placeholder: 'Enter a Team Label',
             class: 'form-input form-input--clear tfh tsl ts--m--xl'
 
         .form-field
           = f.label :article_tokens do
             %span.form-label.label
-              = "Articles (search for articles to add to category)".html_safe
+              = "Articles (search articles to add for team)".html_safe
             = f.input_field :article_tokens, data: { load: @category_articles }
 
-        = f.button :submit, class: 'btn btn--a btn--l'
+        = f.submit button_text, class: 'btn btn--a btn--l'
         = link_to 'Delete', @category, class: 'btn btn--b btn--l', data: { method: :delete, confirm: "Are you sure?" }
+
+    = link_to 'Edit Team', edit_category_url( @category ), class: 'btn btn--a',

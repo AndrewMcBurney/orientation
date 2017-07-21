@@ -26,6 +26,9 @@ class Article < ApplicationRecord
     attribute :tags do
       tags.map { |t| { name: t.name } }
     end
+    attribute :categories do
+      categories.map { |c| { name: c.label } }
+    end
 
     #
     # AlgoliaSearch tags for filtering collections, different from the model's
