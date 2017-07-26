@@ -26,7 +26,7 @@ class CategoriesController < ApplicationController
 
   # GET /categories/:friendly_id
   def show
-    @category_articles = @category.articles
+    @category_articles = @category.articles.order(:title)
   end
 
   # GET /categories/new
