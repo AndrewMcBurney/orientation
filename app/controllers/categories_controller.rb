@@ -76,7 +76,7 @@ class CategoriesController < ApplicationController
   end
 
   def categories
-    Category.order(:label)
+    Category.order(:order)
   end
 
   def set_category
