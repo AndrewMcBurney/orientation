@@ -18,10 +18,11 @@
         categories = (category.name for category in hit.categories).join(', ')
         label = if categories?.length != 0 then "#{categories}: " else ""
 
-        return '<div class="search-result-title">' + label +
-        hit._highlightResult.title.value + '</div>' +
-        '<div class="search-result-content-snippet">"...' +
-        hit._snippetResult.content.value + '..."</div>'
+        return '<div class="search-result-title">' +
+          '<span class="search-result-span">' + label + '</span>' +
+          hit._highlightResult.title.value + '</div>' +
+          '<div class="search-result-content-snippet">"...' +
+          hit._snippetResult.content.value + '..."</div>'
     }
 
     ac = autocomplete('#search', { hint: true }, [
