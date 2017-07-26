@@ -6,5 +6,7 @@
 %section.row
   .cell.well.well--l
     = render 'categories/articles', articles: @category_articles
-    = link_to 'Edit Department', edit_category_url( @category ), class: 'btn btn--a',
-      data: { shortcut: 'e' }
+
+    - if admin_user?
+      = link_to 'Edit Department', edit_category_url( @category ), class: 'btn btn--a',
+        data: { shortcut: 'e' }
