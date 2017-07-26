@@ -7,6 +7,7 @@ class CategoriesController < ApplicationController
   before_action :set_articles, only: [:index, :show]
   before_action :set_categories, only: [:index, :show]
   before_action :set_category, only: [:show, :edit, :update, :destroy]
+  before_action :redirect_unless_admin_user, only: [:new, :create, :edit, :update, :destroy]
 
   # GET /categories
   def index
@@ -98,5 +99,13 @@ class CategoriesController < ApplicationController
     results = search_results.collect { |a| scope.where(title: a["title"])[0] }.compact
 
     ArticleDecorator.decorate_collection(results, context: { search_params: params[:search] })
+  end
+
+  def redirect_unless_admin_user
+    return if admin_user?
+    flash[:notice] = "You must be an admin user to perform this action."
+    redirect_to(:back)
+  rescue ActionController::RedirectBackError
+    redirect_to root_path
   end
 end
