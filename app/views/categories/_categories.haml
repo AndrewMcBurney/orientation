@@ -10,4 +10,5 @@
             .guide-content
               %h2.guide-title= category.label
 
-= link_to 'Add Department', new_category_path
+- if admin_user?
+  = link_to 'Add Department', new_category_path
