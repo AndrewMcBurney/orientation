@@ -42,7 +42,7 @@ jQuery ($) ->
       preventDuplicates: true
     Orientation.algoliasearch('Article')
 
-  $('#article_category_tokens').tokenInput '/teams.json',
+  $('#article_category_tokens').tokenInput '/departments.json',
       propertyToSearch: 'label',
       prePopulate: $('#article_category_tokens').data('load')
       preventDuplicates: true
