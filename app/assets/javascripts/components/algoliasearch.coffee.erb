@@ -1,40 +1,11 @@
 # *************************************
 #
-#   Document Ready
+#   Algoliasearch
+#   -> Search functionality
 #
 # *************************************
 
-jQuery ($) ->
-
-# ----- Functions ----- #
-  Orientation.accordion()
-  Orientation.autoSubmit()
-  Orientation.dropdown()
-  Orientation.headingLink()
-  Orientation.shortcut()
-
-  Orientation.search
-    hiddenClass: 'dn'
-
-  # ----- Modules ----- #
-
-  Orientation.editor.init()
-  Orientation.selectText.init()
-  Orientation.tableBank.init()
-
-  # ----- Vendor ----- #
-
-  # Bootstrap
-
-  $('[data-toggle="tooltip"]').tooltip
-    container: 'body'
-
-  # jquery-ujs
-
-  $('#article_tag_tokens').tokenInput '/tags.json',
-    prePopulate: $('#article_tag_tokens').data('load')
-    preventDuplicates: true
-
+@Orientation.algoliasearch = ( initIndex ) ->
   if (typeof autocomplete != 'undefined')
     algoliaAppId = '<%= ENV.fetch("ALGOLIA_APP_ID") %>'
     algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>'
@@ -44,7 +15,10 @@ jQuery ($) ->
 
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
-        return '<div class="search-result-title">' +
+        categories = (category.name for category in hit.categories).join(', ')
+        label = if categories?.length != 0 then "#{categories}: " else ""
+
+        return '<div class="search-result-title">' + label +
         hit._highlightResult.title.value + '</div>' +
         '<div class="search-result-content-snippet">"...' +
         hit._snippetResult.content.value + '..."</div>'

@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :guides, only: [:index]
+  resources :categories, path: "teams"
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
 
@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   # this has to be the last route because we're catching slugs at the root path
   resources :articles, path: "", only: :show
 
-  root "guides#index"
+  root "categories#index"
 
   # Serve websocket cable requests in-process
   # mount ActionCable.server => '/cable'

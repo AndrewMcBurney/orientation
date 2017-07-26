@@ -9,13 +9,16 @@
               = link_to root_url, class: 'header-btn', data: { shortcut: 1 } do
                 = image_tag( ENV['ORIENTATION_LOGO'], height: 40, width: 40, class: 'vam' )
             %li.list-item
-              = link_to articles_url, class: 'header-btn', data: { shortcut: 2 } do
+              = link_to categories_url, class: 'header-btn', data: { shortcut: 2 } do
+                %span.tss Teams
+            %li.list-item
+              = link_to articles_url, class: 'header-btn', data: { shortcut: 3 } do
                 %span.tss Articles
             %li.list-item
-              = link_to tags_url, class: 'header-btn', data: { shortcut: 3 } do
+              = link_to tags_url, class: 'header-btn', data: { shortcut: 4 } do
                 %span.tss Tags
             %li.list-item.dn.di--s
-              = link_to authors_url, class: 'header-btn', data: { shortcut: 4 } do
+              = link_to authors_url, class: 'header-btn', data: { shortcut: 5 } do
                 %span.tss Authors
 
         .split-cell.dn.db--s
