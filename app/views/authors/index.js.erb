@@ -1,5 +1,15 @@
 ( function() {
-  var authorMarkup = '<%= escape_javascript( render( partial: "authors/author", collection: @authors ) ) %>';                     '<%= escape_javascript( render( partial: "authors/author", collection: @authors ) ) %>';
+  var fallback = "We didn't find an author whose name matches.";
+  var authorMarkup = "<%= escape_javascript( render( @authors ) ) %>";
 
   $( '.js-search-results' ).html( authorMarkup );
+
+  // there are matching results
+  if ( authorMarkup ) {
+    $( '.js-search-results' ).html( authorMarkup );
+
+  // there are no matching results
+  } else {
+    $( '.js-search-results' ).html( fallback );
+  }
 } )();
