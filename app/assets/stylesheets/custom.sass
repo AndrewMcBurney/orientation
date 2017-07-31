@@ -37,8 +37,11 @@ html
   font-weight: $default-font-weight
   font-size: 1.05em
 
-body
+html, body
   background: #FFF
+
+main
+  min-height: 30em
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6
   color: #000
@@ -53,8 +56,20 @@ a
   &:focus, &:active
     outline: 0
 
+
+// layout
+
 .row
-  padding: 0 1.3em
+  clear: both
+  width: 100%
+  padding: 0
+  overflow: visible
+
+.section
+  padding: 5% 1em
+  margin: 0 auto
+  width: 90%
+  max-width: 70em
 
 .label
   font-weight: $default-font-weight
@@ -68,6 +83,15 @@ a
   font-family: $titillium
   color: #000
 
+.full
+  display: block
+
+.well--l
+  margin: 2em 0
+
+.cell
+  max-width: 100%
+
 // buttons, links
 
 .btn, .switch
@@ -78,6 +102,12 @@ a
   background: $btn-color
   &:hover, &:focus
     background: $btn-color-hover
+.signal--fresh,
+.signal--stale,
+.signal--outdated,
+.signal--popular,
+.signal--archived
+  background: $btn-color
 
 // forms
 
@@ -128,16 +158,19 @@ select
 // header
 
 .header
+  border-bottom: 1px solid #eee
   font-family: $titillium
   height: 65px
-  // box-shadow: 0 0 0.2em rgba(0,0,0,0.2)
-  border-bottom: 1px solid #eee
+  img
+    vertical-align: middle
   [data-shortcut="1"]
     img
       width: 1.6em
       height: 1.6em
   .icn--caretDown
     font-size: 0.6em
+  .list-item
+    margin-bottom: 0
 
 .header-btn
   color: #333
@@ -164,17 +197,18 @@ select
 .card
   box-shadow: none
   border-radius: 0
-
-.guide
-  background-image: none
-  text-shadow: none
-  border-radius: 2px
-  min-height: 3.5em
-  &:hover
-    tarnsition: all 0.5s ease
-    background-image: linear-gradient(top, #FB2B69, #FF5B37)
+  &.guide
+    background: #333
+    border-radius: 2px
+    border: 1px solid #000
+    min-height: 7em
+    text-shadow: none
     *
       color: white
+    &:hover
+      transition: all 0.3s ease
+      background: #FC4F46
+      border-color: #CA3F38
 .guide-title
   color: #333
   font-size: 1.2em
@@ -184,7 +218,10 @@ select
 .row--pattern
   background-image: none
 .row--highlight
-  background: #333
+  background: #EEE
+  padding: 0.5em 1em
+  *
+    color: #333
 
 .byline
   background: #FFF
@@ -198,6 +235,35 @@ select
     letter-spacing: normal
 .byline-main
   background: #FFF
+
+// token input
+
+// js search on home page
+
+.js-search
+  form, input
+    width: 100%
+    display: block
+  .split
+    width: 100%
+  .split, .split-cell
+    display: inline-block
+  .btn
+    background: #F6F6F6
+.split-cell
+  &.form--inline
+    width: 100%
+    display: block
+  &.bdrl
+    border-left: 0
+  &.pls
+    padding-left: 0
+  &.prs
+    padding-right: 0
+  &.mls
+    margin-left: 0
+  .btn
+    padding: 0 1em
 
 // articles index
 
@@ -306,14 +372,21 @@ select
 
 @media screen and (max-width: $phablet)
 
+  .header
+    .btn, .js-dropdown-btn
+      display: none
+
+  .row--highlight
+    padding: 0.2em
+
   .js-search-results
     .g-b--m--1of3
       width: 100%
 
-@media screen and (max-width: 768px)
-
-  main
-    .split, .split-cell
+  .js-search
+    .btn
+      font-size: 60%
+    .split
       display: block
       width: 100%
     .bdrl
@@ -327,3 +400,21 @@ select
     .split, .split-cell
       display: flex
       width: auto
+
+  .row--highlight
+    h1
+      font-size: 1.5em
+
+@media screen and (max-width: $handheld)
+
+  .btn
+    margin: 1em 0
+    display: block
+
+  .js-search
+    .btn
+      display: inline-block
+      margin: 0
+
+  .card.guide
+    min-height: 3em
