@@ -11,18 +11,22 @@
     algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>'
 
     client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey)
-    index = client.initIndex('Article')
+    index = client.initIndex( initIndex )
 
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
-        categories = (category.name for category in hit.categories).join(', ')
-        label = if categories?.length != 0 then "#{categories}: " else ""
+        if initIndex is 'Article'
+          categories = (category.name for category in hit.categories).join(', ')
+          label = if categories?.length != 0 then "#{categories}: " else ""
 
-        return '<div class="search-result-title">' +
-          '<span class="search-result-span">' + label + '</span>' +
-          hit._highlightResult.title.value + '</div>' +
-          '<div class="search-result-content-snippet">"...' +
-          hit._snippetResult.content.value + '..."</div>'
+          return '<div class="search-result-title">' +
+            '<span class="search-result-span">' + label + '</span>' +
+            hit._highlightResult.title.value + '</div>' +
+            '<div class="search-result-content-snippet">"...' +
+            hit._snippetResult.content.value + '..."</div>'
+        else if initIndex is 'User'
+          return '<div class="search-result-title">' +
+            hit._highlightResult.name.value + '</div>'
     }
 
     ac = autocomplete('#search', { hint: true }, [

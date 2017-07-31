@@ -11,7 +11,7 @@
             = form_tag authors_path, method: :get, remote: true, class: 'form js-search-form' do
               = search_field_tag :search, params[:search],
                 class: 'js-search-input form-input',
-                placeholder: 'Search authors by name or shtick',
+                placeholder: 'Search authors by name',
                 data: { shortcut: 's' }
 
       .g.mbm.js-search-results
