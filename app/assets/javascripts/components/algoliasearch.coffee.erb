@@ -11,7 +11,7 @@
     algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>'
 
     client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey)
-    index = client.initIndex('Article')
+    index = client.initIndex( initIndex )
 
     autocomplete_suggestion_template = {
       suggestion: (hit) ->
@@ -25,14 +25,15 @@
           hit._snippetResult.content.value + '..."</div>'
     }
 
-    ac = autocomplete('#search', { hint: true }, [
-      {
-        source: autocomplete.sources.hits(index, Orientation.searchOptions()),
-        displayKey: 'title',
-        templates: autocomplete_suggestion_template
-      }
-    ])
+    if initIndex is 'Article'
+      ac = autocomplete('#search', { hint: true }, [
+        {
+          source: autocomplete.sources.hits(index, Orientation.searchOptions()),
+          displayKey: 'title',
+          templates: autocomplete_suggestion_template
+        }
+      ])
 
-    ac.on('autocomplete:selected', (event, suggestion, dataset) ->
-      $('#search').trigger('submit')
-    )
+      ac.on('autocomplete:selected', (event, suggestion, dataset) ->
+        $('#search').trigger('submit')
+      )
