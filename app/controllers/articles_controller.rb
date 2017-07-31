@@ -36,6 +36,7 @@ class ArticlesController < ApplicationController
 
     respond_with do |format|
       format.html { render :index, layout: false if request.xhr? }
+      format.js   { render :index, layout: false }
       format.json do
         render json: TokenQuerier.new(query: params[:q], model: @ordered_articles, attribute: "title").tokens
       end

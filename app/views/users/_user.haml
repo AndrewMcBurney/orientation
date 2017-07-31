@@ -1,0 +1,8 @@
+.g-b.g-b--s--1of2.g-b--m--1of3.mbm
+  .bucket
+    .bucket-media
+      = user.image_link(80)
+    .bucket-content
+      = link_to user.name, author_path(user)
+      %p.mbf.tss= user.shtick
+      %p.mbf.tss= "#{user.articles.count + user.edits.count} contributions"
