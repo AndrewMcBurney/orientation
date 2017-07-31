@@ -1,10 +1,6 @@
 - alternative_content ||= false
 - hide_results ||= false
 
-// Filter for client-side algoliasearch autocomplete
-// Usage with jquery: $('#algolia-filter').val()
-= hidden_field_tag 'algolia-filter', action_name
-
 - form_path = request.path == ('/') ? categories_path : request.path
 .js-search
   .split.mbm

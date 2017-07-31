@@ -35,15 +35,19 @@ jQuery ($) ->
       propertyToSearch: 'title',
       prePopulate: $('#category_article_tokens').data('load')
       preventDuplicates: true
-    Orientation.algoliasearch('Article')
 
   $('#article_tag_tokens').tokenInput '/tags.json',
       prePopulate: $('#article_tag_tokens').data('load')
       preventDuplicates: true
-    Orientation.algoliasearch('Article')
 
   $('#article_category_tokens').tokenInput '/departments.json',
       propertyToSearch: 'label',
       prePopulate: $('#article_category_tokens').data('load')
       preventDuplicates: true
+
+  # Use 'User' for algoliasearch index for 'authors' controller, default to
+  # 'Article' for everything else
+  if $('#controller_name').val() is 'authors'
+    Orientation.algoliasearch('User')
+  else
     Orientation.algoliasearch('Article')

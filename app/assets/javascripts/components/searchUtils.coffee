@@ -8,7 +8,7 @@
 
 # Returns JSON object denoting filter for client-side algoliasarch autocomplete
 @Orientation.getFilter = ->
-  filterData = $('#algolia-filter').val()
+  filterData = $('#action_name').val()
 
   return {} if not filterData or filterData in ['index', 'search', 'popular']
   { tagFilters: filterData }
