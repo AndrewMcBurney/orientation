@@ -18,6 +18,22 @@ Current master is to be updated only with upstream's (orientation/orientation) m
 
 `git push heroku pseudo-master:master --force`
 
+### Deploying to QA
+
+#### Doxbot
+
+```
+doxbot ship wiki to staging
+```
+
+#### Heroku
+
+```
+git remote add qa https://git.heroku.com/dox-orientation-qa.git
+git push qa your_branch:master
+```
+Visit: http://dox-orientation-qa.herokuapp.com/
+
 
 ## What is Orientation?
 
