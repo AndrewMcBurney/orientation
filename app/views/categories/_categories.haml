@@ -1,0 +1,14 @@
+- if categories.empty?
+  %h1 There are no departments.
+
+- else
+  .g.collection
+    - categories.each do |category|
+      .g-b.g-b--m--1of2.g-b--l--1of3.collection-item
+        = link_to category do
+          .card.card--highlight.guide
+            .guide-content
+              %h2.guide-title= category.label
+
+- if admin_user?
+  = link_to 'Add Department', new_category_path, class: 'btn'

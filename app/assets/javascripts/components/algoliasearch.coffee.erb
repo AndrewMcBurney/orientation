@@ -1,0 +1,39 @@
+# *************************************
+#
+#   Algoliasearch
+#   -> Search functionality
+#
+# *************************************
+
+@Orientation.algoliasearch = ( initIndex ) ->
+  if (typeof autocomplete != 'undefined')
+    algoliaAppId = '<%= ENV.fetch("ALGOLIA_APP_ID") %>'
+    algoliaSearchOnlyApiKey = '<%= ENV.fetch("ALGOLIA_SEARCH_ONLY_API_KEY") %>'
+
+    client = algoliasearch(algoliaAppId, algoliaSearchOnlyApiKey)
+    index = client.initIndex( initIndex )
+
+    autocomplete_suggestion_template = {
+      suggestion: (hit) ->
+        categories = (category.name for category in hit.categories).join(', ')
+        label = if categories?.length != 0 then "#{categories}: " else ""
+
+        return '<div class="search-result-title">' +
+          '<span class="search-result-span">' + label + '</span>' +
+          hit._highlightResult.title.value + '</div>' +
+          '<div class="search-result-content-snippet">"...' +
+          hit._snippetResult.content.value + '..."</div>'
+    }
+
+    if initIndex is 'Article'
+      ac = autocomplete('#search', { hint: true }, [
+        {
+          source: autocomplete.sources.hits(index, Orientation.searchOptions()),
+          displayKey: 'title',
+          templates: autocomplete_suggestion_template
+        }
+      ])
+
+      ac.on('autocomplete:selected', (event, suggestion, dataset) ->
+        $('#search').trigger('submit')
+      )

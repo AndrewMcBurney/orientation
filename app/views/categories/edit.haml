@@ -1,0 +1,6 @@
+- @category.errors.full_messages.each do |error|
+  %p.bulletin.bulletin--warning= error
+
+.row
+  .section
+    = render partial: 'form', locals: { label_text: 'Edit Department', button_text: 'Save' }

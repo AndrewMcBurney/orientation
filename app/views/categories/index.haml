@@ -1,5 +1,5 @@
-%section.row
-  .cell.well.well--l
+.row
+  .section
 
     = render layout: 'articles/search', locals: { alternative_content: true, hide_results: true } do
-      = render 'guides/guides', guides: @guides
+      = render 'categories/categories', categories: @categories

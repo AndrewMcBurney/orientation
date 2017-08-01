@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 class Article < ApplicationRecord
   include Dateable
   include PgSearch
+  include AlgoliaSearch
 
   extend ActionView::Helpers::DateHelper
   extend FriendlyId
@@ -16,6 +19,32 @@ class Article < ApplicationRecord
 
   def has_friendly_id_slug?
     slugs.where(slug: friendly_id).exists?
+  end
+
+  algoliasearch do
+    attributes :title, :content
+    attribute :tags do
+      tags.map { |t| { name: t.name } }
+    end
+    attribute :categories do
+      categories.map { |c| { name: c.label } }
+    end
+
+    #
+    # AlgoliaSearch tags for filtering collections, different from the model's
+    # 'tags' attribute
+    #
+    # Client usage:
+    #  Algolia::Index.new("Article").search(params[:search], { tagFilters: filter })["hits"]
+    #
+    # When no tags are present, defaults to searching all records
+    #
+    tags do
+      %w[fresh stale outdated archived].select { |tag| public_send("#{tag}?") }
+    end
+
+    searchableAttributes %w[title tags content]
+    ranking ['asc(title)', 'exact', 'attribute', 'proximity']
   end
 
   FRESHNESS_LIMIT = 7.days
@@ -48,15 +77,17 @@ class Article < ApplicationRecord
   belongs_to :outdatedness_reporter, class_name: "User"
 
   has_many :articles_tags, dependent: :destroy
+  has_many :articles_categories, dependent: :destroy
   has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
+  has_many :categories, through: :articles_categories
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
   has_many :subscribers, through: :subscriptions, class_name: "User", source: :user
   has_many :endorsements, class_name: "ArticleEndorsement", dependent: :destroy
   has_many :endorsers, through: :endorsements, class_name: "User", source: :user
   has_many :views
 
-  attr_reader :tag_tokens
+  attr_reader :tag_tokens, :category_tokens
 
   validates :title, presence: true
 
@@ -73,7 +104,6 @@ class Article < ApplicationRecord
     where(%Q["articles"."updated_at" >= ?], FRESHNESS_LIMIT.ago)
       .where(archived_at: nil, outdated_at: nil)
   end
-  scope :guide,   -> { where(guide: true) }
   scope :popular, -> do
     order(endorsements_count: :desc, subscriptions_count: :desc, visits: :desc)
   end
@@ -112,7 +142,7 @@ class Article < ApplicationRecord
   end
 
   def archive!
-    update_attribute(:archived_at, Time.current)
+    update_attributes(archived_at: Time.current)
   end
 
   def archived?
@@ -144,7 +174,7 @@ class Article < ApplicationRecord
   end
 
   def refresh!
-    update_attribute(:outdated_at, nil)
+    update_attributes(outdated_at: nil)
     touch(:updated_at)
   end
 
@@ -198,8 +228,16 @@ class Article < ApplicationRecord
     subscriptions.reject { |s| s.user == editor }
   end
 
+  def category_tokens=(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = CategoryFactory.new.build(attributes).map(&:id)
+    self.category_ids = existing_ids + new_ids
+  end
+
   def tag_tokens=(tokens)
-    self.tag_ids = Tag.ids_from_tokens(tokens)
+    attributes, existing_ids = TokenParser.new(tokens).parse_token_string
+    new_ids = TagFactory.new.build(attributes).map(&:id)
+    self.tag_ids = existing_ids + new_ids
   end
 
   def to_s
@@ -207,7 +245,7 @@ class Article < ApplicationRecord
   end
 
   def unarchive!
-    update_attribute(:archived_at, nil)
+    update_attributes(archived_at: nil)
   end
 
   # @user - the user to unendorse this article for
@@ -231,7 +269,7 @@ class Article < ApplicationRecord
   # @user - the user to create an article vide for
   # Returns the article view if successfully created
   # Raises otherwise
-  def view(user: )
+  def view(user:)
     existing_view = views.find_by(user: user)
 
     if existing_view.present?

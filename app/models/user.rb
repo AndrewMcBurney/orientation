@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include AlgoliaSearch
+
   belongs_to :article
   has_many :articles, foreign_key: "author_id", dependent: :restrict_with_exception
   has_many :subscriptions, class_name: "ArticleSubscription", dependent: :destroy
@@ -14,6 +16,12 @@ class User < ApplicationRecord
 
   validates :email, presence: true
   validate :whitelisted_email, if: -> { self.class.email_whitelist_enabled? }
+
+  algoliasearch do
+    attributes :name
+    searchableAttributes %w[name]
+    ranking ["asc(name)", "exact", "attribute", "proximity"]
+  end
 
   def self.author
     joins(:articles).group('users.id').having('count(articles.id) > 0')
