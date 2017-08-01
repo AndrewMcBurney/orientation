@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class HtmlWithPygments < Redcarpet::Render::HTML
+  attr_writer :options
+
   def header(title, level)
     permalink = title.parameterize.downcase
     %(
@@ -59,7 +63,9 @@ class HtmlWithPygments < Redcarpet::Render::HTML
   private
 
   def article_status(link)
-    'article-not-found' if !valid_article?(link)
+    return if valid_article?(link)
+    broken_link_factory.build(link_params(link)) if build_links?
+    "article-not-found"
   end
 
   def article_link(article_title)
@@ -93,5 +99,17 @@ class HtmlWithPygments < Redcarpet::Render::HTML
     URI.parse(link)
   rescue URI::InvalidURIError
     nil
+  end
+
+  def link_params(link)
+    @options[:article_params].merge(url: link)
+  end
+
+  def broken_link_factory
+    @broken_link_factory ||= BrokenLinksFactory.new
+  end
+
+  def build_links?
+    @options[:build_links]
   end
 end

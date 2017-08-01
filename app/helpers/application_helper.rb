@@ -1,16 +1,17 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def body_class
     %|#{controller.controller_name} #{controller.controller_name}-#{controller.action_name} #{@body_class}|
   end
 
-  def markdown(text)
-    renderer = HtmlWithPygments.new(hard_wrap: true, escape_html: true)
-    Redcarpet::Markdown.new(renderer, markdown_options.merge(footnotes: true)).render(text).html_safe
+  def markdown(text, options = {})
+    markdown_parser.renderer.options = options
+    markdown_parser.render(text).html_safe
   end
 
   def table_of_contents(text)
-    renderer = Redcarpet::Render::HTML_TOC.new(nesting_level: 4)
-    Redcarpet::Markdown.new(renderer, markdown_options).render(text).html_safe
+    html_toc_parser.render(text).html_safe
   end
 
   ##
@@ -43,6 +44,22 @@ module ApplicationHelper
   end
 
   private
+
+  def markdown_parser
+    @markdown_parser ||= Redcarpet::Markdown.new(markdown_renderer, markdown_options.merge(footnotes: true))
+  end
+
+  def html_toc_parser
+    @html_toc_parser ||= Redcarpet::Markdown.new(html_toc_renderer, markdown_options)
+  end
+
+  def markdown_renderer
+    @markdown_renderer ||= HtmlWithPygments.new(hard_wrap: true, escape_html: true)
+  end
+
+  def html_toc_renderer
+    @html_toc_renderer ||= Redcarpet::Render::HTML_TOC.new(nesting_level: 4)
+  end
 
   def markdown_options
     {
