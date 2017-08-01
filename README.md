@@ -20,6 +20,14 @@ Current master is to be updated only with upstream's (orientation/orientation) m
 
 ### Deploying to QA
 
+#### Doxbot
+
+```
+doxbot ship wiki to staging
+```
+
+#### Heroku
+
 ```
 git remote add qa https://git.heroku.com/dox-orientation-qa.git
 git push qa your_branch:master
