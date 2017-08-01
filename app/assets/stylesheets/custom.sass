@@ -100,14 +100,6 @@ a
   font-weight: normal
 .btn--a
   background: $btn-color
-  &:hover, &:focus
-    background: $btn-color-hover
-.signal--fresh,
-.signal--stale,
-.signal--outdated,
-.signal--popular,
-.signal--archived
-  background: $btn-color
 
 // forms
 
@@ -246,10 +238,21 @@ select
     display: block
   .split
     width: 100%
-  .split, .split-cell
+  .split,
+  .split-cell
     display: inline-block
   .btn
     background: #F6F6F6
+  .signal--fresh,
+  .signal--stale,
+  .signal--outdated,
+  .signal--popular,
+  .signal--archived
+    background: $btn-color
+    color: white
+    &:hover, &:focus
+      background: $btn-color-hover
+
 .split-cell
   &.form--inline
     width: 100%
