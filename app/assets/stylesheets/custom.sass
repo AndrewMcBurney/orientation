@@ -2,16 +2,16 @@
 
 // variables
 
-@import 'https://fonts.googleapis.com/css?family=Oxygen:300,400,700|Titillium+Web:300,400,600'
+@import 'https://fonts.googleapis.com/css?family=Oxygen:300,400,500,700|Titillium+Web:300,400,500,600'
 
 $titillium:              'Titillium Web', Helvetica, sans-serif
 $oxygen:                 'Oxygen', Helvetica, sans-serif
 $default-font-weight:    normal
 
-$a-color:                #41BF56
-$a-color-hover:          #359B46
-$btn-color:              #5AD427
-$btn-color-hover:        #A4E786
+$a-color:                #3BAD4E
+$a-color-hover:          #2F8A3E
+$btn-color:              $a-color
+$btn-color-hover:        $a-color-hover
 
 $desktop-larger:         1820px
 $desktop-large:          1680px
@@ -39,6 +39,11 @@ html
 
 html, body
   background: #FFF
+
+body
+  -moz-osx-font-smoothing: grayscale
+  -webkit-font-smoothing: antialiased
+  font-smoothing: antialiased
 
 main
   min-height: 30em
@@ -77,7 +82,6 @@ a
 .bulletin
   background: #FFF3C9
   color: #555
-  font-weight: 300
 
 .tfh
   font-family: $titillium
@@ -100,6 +104,7 @@ a
   font-weight: normal
 .btn--a
   background: $btn-color
+
 
 // forms
 
@@ -135,7 +140,6 @@ select
   color: #666
   border-radius: 1px
   font-size: 0.9em
-  font-weight: 300
   text-transform: capitalize
 .token-input-dropdown
   background: #EEE
@@ -326,7 +330,6 @@ select
       font-size: 0.95em
   aside
     a
-      font-weight: 300
       font-size: 0.9em
     .list-item
       line-height: 1.2
