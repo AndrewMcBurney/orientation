@@ -5,6 +5,11 @@ class AuthorsController < ApplicationController
     ordered_users = User.order(:name).text_search(params[:search])
     authors = params[:all] ? ordered_users.all : ordered_users.active
     @authors = AuthorDecorator.decorate_collection authors
+
+    respond_to do |format|
+      format.html { render :index }
+      format.js   { render :index, layout: false }
+    end
   end
 
   def show

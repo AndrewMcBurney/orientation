@@ -34,6 +34,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def admin_user?
+    current_user.administrator?
+  end
+  helper_method :admin_user?
+
   def user_signed_in?
     current_user.present?
   end

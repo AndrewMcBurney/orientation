@@ -7,7 +7,6 @@
 jQuery ($) ->
 
   # ----- Functions ----- #
-
   Orientation.accordion()
   Orientation.autoSubmit()
   Orientation.dropdown()
@@ -15,7 +14,7 @@ jQuery ($) ->
   Orientation.shortcut()
 
   Orientation.search
-    hiddenClass : 'dn'
+    hiddenClass: 'dn'
 
   # ----- Modules ----- #
 
@@ -27,11 +26,28 @@ jQuery ($) ->
 
   # Bootstrap
 
-  $( '[data-toggle="tooltip"]' ).tooltip
-    container : 'body'
+  $('[data-toggle="tooltip"]').tooltip
+    container: 'body'
 
   # jquery-ujs
 
-  $( '#article_tag_tokens' ).tokenInput '/tags.json',
-    prePopulate       : $( '#article_tag_tokens' ).data( 'load' )
-    preventDuplicates : true
+  $('#category_article_tokens').tokenInput '/articles.json',
+      propertyToSearch: 'title',
+      prePopulate: $('#category_article_tokens').data('load')
+      preventDuplicates: true
+
+  $('#article_tag_tokens').tokenInput '/tags.json',
+      prePopulate: $('#article_tag_tokens').data('load')
+      preventDuplicates: true
+
+  $('#article_category_tokens').tokenInput '/departments.json',
+      propertyToSearch: 'label',
+      prePopulate: $('#article_category_tokens').data('load')
+      preventDuplicates: true
+
+  # Use 'User' for algoliasearch index for 'authors' controller, default to
+  # 'Article' for everything else
+  if $('#controller_name').val() is 'authors'
+    Orientation.algoliasearch('User')
+  else
+    Orientation.algoliasearch('Article')

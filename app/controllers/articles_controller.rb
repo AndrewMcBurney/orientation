@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ArticlesController < ApplicationController
   include ArticlesHelper
 
@@ -20,12 +22,25 @@ class ArticlesController < ApplicationController
     :report_outdated,
     :mark_fresh
   ]
+  before_action :fetch_articles_with_filter, only: [
+    :fresh,
+    :stale,
+    :outdated,
+    :archived
+  ]
   respond_to :html, :json
 
   def index
     @articles = fetch_articles
+    @ordered_articles = Article.order(:title).limit(1000)
 
-    render :index, layout: false if request.xhr?
+    respond_with do |format|
+      format.html { render :index, layout: false if request.xhr? }
+      format.js   { render :index, layout: false }
+      format.json do
+        render json: TokenQuerier.new(query: params[:q], model: @ordered_articles, attribute: "title").tokens
+      end
+    end
   end
 
   def show
@@ -49,37 +64,35 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @tags = @article.tags.collect{ |t| Hash["id" => t.id, "name" => t.name] }
+    @tags = @article.tags.collect { |t| Hash["id" => t.id, "name" => t.name] }
+    @categories =
+      @article.categories.collect { |c| Hash["id" => c.id, "label" => c.label] }
   end
 
   def fresh
-    @articles = fetch_articles(Article.current.fresh)
     @page_title = "Fresh Articles"
-    render :index
+    render_search_page
   end
 
   def stale
-    @articles = fetch_articles(Article.current.stale)
     @page_title = "Stale Articles"
-    render :index
+    render_search_page
   end
 
   def outdated
-    @articles = fetch_articles(Article.current.outdated)
     @page_title = "Outdated Articles"
-    render :index
+    render_search_page
   end
 
   def archived
-    @articles = fetch_articles(Article.archived)
     @page_title = "Archived Articles"
-    render :index
+    render_search_page
   end
 
   def popular
     @articles = fetch_articles(Article.current.popular)
     @page_title = "Popular Articles"
-    render :index
+    render_search_page
   end
 
   def toggle_archived
@@ -146,12 +159,13 @@ class ArticlesController < ApplicationController
     if search_title_only?
       @articles = fetch_articles_by_title
     else
-      @articles = fetch_articles(Article.current)
+      @articles = fetch_articles
     end
+
+    render_search_page
   end
 
   private
-
 
   def error_message(article)
     if article.errors.messages.key?(:friendly_id)
@@ -163,12 +177,23 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(
-      :created_at, :updated_at, :title, :content, :tag_tokens,
-      :author_id, :editor_id, :archived_at, :guide, images: [])
+      :created_at, :updated_at, :title, :content, :tag_tokens, :category_tokens,
+      :author_id, :editor_id, :archived_at, images: [])
   end
 
   def decorate_article
     @article = ArticleDecorator.new(find_article_by_params)
+  end
+
+  def fetch_articles_with_filter
+    @articles = fetch_articles(Article.current.public_send(action_name), action_name)
+  end
+
+  def render_search_page
+    respond_to do |format|
+      format.html { render :index }
+      format.js   { render :index, layout: false }
+    end
   end
 
   def fetch_articles_by_title
@@ -177,10 +202,13 @@ class ArticlesController < ApplicationController
     ArticleDecorator.decorate_collection(collection)
   end
 
-  def fetch_articles(scope = nil)
-    scope ||= Article.current
-    query = Article.includes(:tags).text_search(params[:search], scope)
-    ArticleDecorator.decorate_collection(query, context: { search_params: params[:search] })
+  def fetch_articles(scope = nil, filter = nil)
+    scope  ||= Article.current
+    @count ||= scope.try(:count) || 0
+    search_results = Algolia::Index.new("Article").search(params[:search], { tagFilters: filter })["hits"]
+    results = search_results.collect { |a| scope.where(title: a["title"])[0] }.compact
+
+    ArticleDecorator.decorate_collection(results, context: { search_params: params[:search] })
   end
 
   def find_article_by_params
