@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class ArticlesController < ApplicationController
-  include ApplicationHelper
   include ArticlesHelper
-  include BrokenLinksHelper
 
   before_action :set_paper_trail_whodunnit, only: [
     :update,
@@ -58,7 +56,7 @@ class ArticlesController < ApplicationController
     @article = Article.new(article_params)
     if @article.save
       @article.subscribe(@article.author)
-      find_broken_links_for_article(@article)
+      ArticleLinksService.new(@article).find_broken_links
 
       flash[:notice] = "Article was successfully created."
     else
@@ -120,7 +118,7 @@ class ArticlesController < ApplicationController
 
   def update
     if @article.update_attributes(article_params)
-      refresh_broken_links_for_article(@article)
+      ArticleLinksService.new(@article).refresh_broken_links
       flash[:notice] = "Article was successfully updated."
     else
       flash[:error] = error_message(@article)
