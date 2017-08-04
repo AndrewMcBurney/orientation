@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HtmlWithPygments < Redcarpet::Render::HTML
-  attr_writer :options
+  attr_writer :options, :permalinks
 
   def header(title, level)
     permalink = title.parameterize.downcase
@@ -46,6 +46,8 @@ class HtmlWithPygments < Redcarpet::Render::HTML
   end
 
   def preprocess(full_document)
+    @permalinks = find_anchor_tags(full_document)
+
     # matches [[Article Title]] or [[article-title]] relative
     # links, see https://regex101.com/r/aR5bS0/1
     pattern = /\[{2}(.*?)\]{2}/
@@ -61,6 +63,11 @@ class HtmlWithPygments < Redcarpet::Render::HTML
   end
 
   private
+
+  def find_anchor_tags(full_document)
+    # Match all anchor tags
+    full_document.scan(/\[.*?\]\((#.*)\)/).flatten
+  end
 
   def article_status(link)
     return if valid_article?(link)
@@ -84,7 +91,13 @@ class HtmlWithPygments < Redcarpet::Render::HTML
     end
   end
 
+  def anchor_tag?(link)
+    @permalinks.include?(link)
+  end
+
   def valid_article?(link)
+    return true if anchor_tag?(link)
+
     link = safe_url_parser.path unless internal_link?(link)
     return false if link.nil?
 

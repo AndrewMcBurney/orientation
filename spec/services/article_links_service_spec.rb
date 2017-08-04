@@ -10,8 +10,16 @@ RSpec.describe ArticleLinksService do
       ### broken-link-tag-1
       [1](/tags/broken-link-tag-1)
 
+      ## Anchor Link Above
+
+      ### anchor-link (not broken)
+      [anchor-link-above](#anchor-link-above)
+      [anchor-link-below](#anchor-link-below)
+
       ### broken-link-tag-2
       [2](/tags/broken-link-tag-2)
+
+      ## Anchor Link Below
 
       ### non-broken-link
       [Google](https://google.com)

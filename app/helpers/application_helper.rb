@@ -6,7 +6,7 @@ module ApplicationHelper
   end
 
   def markdown(text, options = {})
-    markdown_parser.renderer.options = options
+    configure_markdown_parser(options)
     markdown_parser.render(text).html_safe
   end
 
@@ -44,6 +44,11 @@ module ApplicationHelper
   end
 
   private
+
+  def configure_markdown_parser(options)
+    markdown_parser.renderer.options = options
+    markdown_parser.renderer.permalinks = []
+  end
 
   def markdown_parser
     @markdown_parser ||= Redcarpet::Markdown.new(markdown_renderer, markdown_options.merge(footnotes: true))
