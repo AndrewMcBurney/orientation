@@ -5,6 +5,10 @@ require "rails_helper"
 RSpec.describe CategoriesController, type: :controller do
   let(:attributes) { { label: "Sample Category" } }
 
+  before do
+    allow_any_instance_of(User).to(receive(:administrator?).and_return(true))
+  end
+
   describe "GET #index" do
     it "returns a success response" do
       Category.create! attributes
