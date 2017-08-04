@@ -16,6 +16,9 @@ RSpec.describe ArticleLinksService do
       [anchor-link-above](#anchor-link-above)
       [anchor-link-below](#anchor-link-below)
 
+      ### anchor-tag, other page
+      [3](/#search)
+
       ### broken-link-tag-2
       [2](/tags/broken-link-tag-2)
 

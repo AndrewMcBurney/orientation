@@ -47,7 +47,6 @@ module ApplicationHelper
 
   def configure_markdown_parser(options)
     markdown_parser.renderer.options = options
-    markdown_parser.renderer.permalinks = []
   end
 
   def markdown_parser
