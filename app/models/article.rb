@@ -78,6 +78,7 @@ class Article < ApplicationRecord
 
   has_many :articles_tags, dependent: :destroy
   has_many :articles_categories, dependent: :destroy
+  has_many :broken_links, dependent: :destroy
   has_many :update_requests, dependent: :destroy
   has_many :tags, through: :articles_tags, counter_cache: :tags_count
   has_many :categories, through: :articles_categories

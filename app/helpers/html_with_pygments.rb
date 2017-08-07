@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class HtmlWithPygments < Redcarpet::Render::HTML
-  attr_writer :options, :permalinks
+  attr_reader :article_parser
+  attr_writer :options
 
   def header(title, level)
     permalink = title.parameterize.downcase
@@ -23,8 +24,8 @@ class HtmlWithPygments < Redcarpet::Render::HTML
   end
 
   def link(link, title, content)
-    if internal_link?(link) && !valid_article?(link)
-      class_attribute = "class='#{article_status(link)}'"
+    if article_parser.internal_link?(link) && !article_parser.valid_article?(link)
+      class_attribute = "class='#{article_parser.article_link_status(link)}'"
     end
     title_attribute = "title='#{title}'" if title
 
@@ -41,12 +42,11 @@ class HtmlWithPygments < Redcarpet::Render::HTML
   def normal_text(text)
     text.gsub!("[ ]", "<input type='checkbox'>") if text.match(/^\[{1}\s\]{1}/)
     text.gsub!("[x]", "<input type='checkbox' checked>") if text.match(/^\[{1}(x|X)\]{1}/)
-
     text
   end
 
   def preprocess(full_document)
-    @permalinks = find_anchor_tags(full_document)
+    @article_parser = ArticleParserService.new(@options, full_document)
 
     # matches [[Article Title]] or [[article-title]] relative
     # links, see https://regex101.com/r/aR5bS0/1
@@ -64,65 +64,7 @@ class HtmlWithPygments < Redcarpet::Render::HTML
 
   private
 
-  def find_anchor_tags(full_document)
-    # Match all anchor tags
-    full_document.scan(/\[.*?\]\((#.*)\)/).flatten
-  end
-
-  def article_status(link)
-    return if valid_article?(link)
-    broken_link_factory.build(link_params(link)) if build_links?
-    "article-not-found"
-  end
-
   def article_link(article_title)
     Rails.application.routes.url_helpers.article_url(article_title, only_path: true)
-  end
-
-  def internal_link?(link)
-    url = safe_url_parser(link)
-    return false if url.blank?
-
-    if url.absolute?
-      root = Rails.application.routes.url_helpers.root_url(host: ENV.fetch("ORIENTATION_DOMAIN"))
-      link.include?(root)
-    else
-      true
-    end
-  end
-
-  def anchor_tag?(link)
-    @permalinks.include?(link)
-  end
-
-  def valid_article?(link)
-    return true if anchor_tag?(link)
-
-    link = safe_url_parser.path unless internal_link?(link)
-    return false if link.nil?
-
-    slug = link.split('/').last
-
-    Article.friendly.find(slug)
-  rescue ActiveRecord::RecordNotFound
-    false
-  end
-
-  def safe_url_parser(link)
-    URI.parse(link)
-  rescue URI::InvalidURIError
-    nil
-  end
-
-  def link_params(link)
-    @options[:article_params].merge(url: link)
-  end
-
-  def broken_link_factory
-    @broken_link_factory ||= BrokenLinksFactory.new
-  end
-
-  def build_links?
-    @options[:build_links]
   end
 end
