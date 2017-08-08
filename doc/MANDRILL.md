@@ -64,12 +64,12 @@ slug: `stale-article-alert`
 <p>Thanks for fighting information rot</p>
 ```
 
-slug: `rotten-article-alert`
+slug: `outdated-article-alert`
 
 ```html
 <p>Howdy,</p>
 
-<p>The following articles you wrote have been marked as rotten by your peers:</p>
+<p>The following articles you wrote have been marked as outdated by your peers:</p>
 
 <ul>
   *|CONTENT|*

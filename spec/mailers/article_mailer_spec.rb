@@ -22,19 +22,19 @@ RSpec.xdescribe ArticleMailer do
     it { is_expected.to be_from(email: 'ops@doximity.com') }
   end
 
-  context ".notify_author_of_rotten" do
+  context ".notify_author_of_outdated" do
     let(:articles) do
-      2.times { create(:article, :rotten, author: user) }
+      2.times { create(:article, :outdated, author: user) }
       user.articles
     end
 
-    let(:mailer) { described_class.notify_author_of_rotten(articles) }
+    let(:mailer) { described_class.notify_author_of_outdated(articles) }
 
     subject { mailer }
 
     it { is_expected.to send_email_to(email: user.email) }
-    it { is_expected.to use_template('rotten-article-alert') }
-    it { is_expected.to have_subject('Some of your Wiki articles have been marked as rotten') }
+    it { is_expected.to use_template('outdated-article-alert') }
+    it { is_expected.to have_subject('Some of your Wiki articles have been marked as outdated') }
     # If the slug for all artuckes are in the email, it's a safe bet the full URLs are as well.
     it { articles.each { |article| is_expected.to include_merge_var_content(article.slug) } }
     it { is_expected.to include_merge_var_content(articles.second.slug) }
@@ -109,8 +109,8 @@ RSpec.xdescribe ArticleMailer do
     subject { mailer }
 
     it { is_expected.to send_email_to(email: contributors.first[:email]) }
-    it { is_expected.to use_template('article-rotten-update') }
-    it { is_expected.to have_subject("#{reporter.name} marked #{article.title} as rotten") }
+    it { is_expected.to use_template('article-outdated-update') }
+    it { is_expected.to have_subject("#{reporter.name} marked #{article.title} as outdated") }
     it { is_expected.to be_from(email: 'ops@doximity.com') }
   end
 
