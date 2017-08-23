@@ -56,6 +56,8 @@ class ArticlesController < ApplicationController
     @article = Article.new(article_params)
     if @article.save
       @article.subscribe(@article.author)
+      ArticleLinksService.new(@article).find_broken_links
+
       flash[:notice] = "Article was successfully created."
     else
       flash[:error] = error_message(@article)
@@ -116,6 +118,7 @@ class ArticlesController < ApplicationController
 
   def update
     if @article.update_attributes(article_params)
+      ArticleLinksService.new(@article).refresh_broken_links
       flash[:notice] = "Article was successfully updated."
     else
       flash[:error] = error_message(@article)

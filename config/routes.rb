@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   resources :categories, path: "departments"
   resources :subscriptions, only: :index
   resources :endorsements, only: :index
+  resources :broken_links, only: :index
 
   get 'opensearchdescription.xml' => 'open_search/descriptions#show',
     format: false,

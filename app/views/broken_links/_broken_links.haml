@@ -1,0 +1,8 @@
+- @broken_links_array.each do |broken_links|
+  - unless broken_links.empty?
+    - article = broken_links.first.article
+
+    %li.list-item
+      %span.dib.mrxs
+      = link_to article.title, article
+      %strong - #{article.author.name} | #{broken_links.length}
